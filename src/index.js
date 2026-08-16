@@ -14,7 +14,6 @@ import * as ground from './3d/ground';
 // import * as vignette from './3d/vignette';
 import * as reflectedGround from './3d/reflectedGround';
 import * as math from './utils/math';
-import * as mobile from './fallback/mobile';
 
 var raf = window.requestAnimationFrame.bind(window);
 
@@ -37,8 +36,6 @@ var _time = 0;
 var _ray = new THREE.Ray();
 
 var _initAnimation = 0;
-
-var _footerItems;
 
 var BLACK = new THREE.Color(0x222222);
 var WHITE = new THREE.Color(0xeeeeee);
@@ -140,8 +137,6 @@ function init() {
         envGui.open();
     }
 
-    _footerItems = document.querySelectorAll('.footer span');
-
     window.addEventListener('resize', _onResize);
     window.addEventListener('mousedown', _onDown);
     window.addEventListener('mousemove', _onMove);
@@ -239,12 +234,6 @@ function _render(dt, newTime) {
     _renderer.render(_scene, _camera);
 
     document.documentElement.classList.toggle('is-white', settings.isWhite);
-    var ratio;
-    for(var i = 0, len = _footerItems.length; i < len; i++) {
-        ratio = math.unLerp(0.5 + i * 0.01, 0.6 + i * 0.01, _initAnimation);
-        _footerItems[i].style.transform = 'translate3d(0,' + ((1 - Math.pow(ratio, 3)) * 50) + 'px,0)';
-    }
-
 }
 
-mobile.pass(init);
+init();
