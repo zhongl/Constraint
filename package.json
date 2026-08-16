@@ -5,17 +5,11 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "computed-style": "0.3.0",
     "dat.gui": "^0.7.9",
     "dom-css": "^1.1.1",
-    "gl-matrix": "^2.3.1",
     "glsl-noise": "^0.0.0",
     "glsl-random": "^0.0.5",
-    "incremental-convex-hull": "^1.0.1",
-    "min-signal": "^0.0.5",
-    "stats.js": "mrdoob/stats.js",
-    "three": "file:./src/libs/global_three/",
-    "underscore": "^1.8.3"
+    "three": "file:./src/libs/global_three/"
   },
   "devDependencies": {
     "glslify": "^5.0.2",
