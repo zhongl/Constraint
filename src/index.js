@@ -1,4 +1,4 @@
-import dat from 'dat.gui';
+import GUI from 'lil-gui';
 // import Stats from 'stats.js';
 import css from 'dom-css';
 import THREE from 'three';
@@ -117,7 +117,7 @@ function init() {
     reflectedGround.init(_renderer, _scene, _camera);
     _scene.add(reflectedGround.mesh);
 
-    _gui = new dat.GUI();
+    _gui = new GUI();
     var linesGui = _gui.addFolder('Motion');
     linesGui.add(settings, 'constraintRatio', 0, 0.15).name('constraint ratio');
     linesGui.add(settings, 'followMouse').name('follow mouse');
