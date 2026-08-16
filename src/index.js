@@ -1,4 +1,3 @@
-import quickLoader from 'quick-loader';
 import dat from 'dat.gui';
 // import Stats from 'stats.js';
 import css from 'dom-css';
@@ -39,7 +38,6 @@ var _ray = new THREE.Ray();
 
 var _initAnimation = 0;
 
-var _logo;
 var _footerItems;
 
 var BLACK = new THREE.Color(0x222222);
@@ -142,7 +140,6 @@ function init() {
         envGui.open();
     }
 
-    _logo = document.querySelector('.logo');
     _footerItems = document.querySelectorAll('.footer span');
 
     window.addEventListener('resize', _onResize);
@@ -242,17 +239,7 @@ function _render(dt, newTime) {
     _renderer.render(_scene, _camera);
 
     document.documentElement.classList.toggle('is-white', settings.isWhite);
-    var ratio = Math.min((1 - Math.abs(_initAnimation - 0.5) * 2) * 1.2, 1);
-    var blur = (1 - ratio) * 10;
-    _logo.style.display = ratio ? 'block' : 'none';
-    if(ratio) {
-        _logo.style.opacity = ratio;
-        _logo.style.webkitFilter = 'blur(' + blur + 'px)';
-        ratio = (0.8 + Math.pow(_initAnimation, 1.5) * 0.3);
-        if(_width < 580) ratio *= 0.5;
-        _logo.style.transform = 'scale3d(' + ratio + ',' + ratio + ',1)';
-    }
-
+    var ratio;
     for(var i = 0, len = _footerItems.length; i < len; i++) {
         ratio = math.unLerp(0.5 + i * 0.01, 0.6 + i * 0.01, _initAnimation);
         _footerItems[i].style.transform = 'translate3d(0,' + ((1 - Math.pow(ratio, 3)) * 50) + 'px,0)';
@@ -260,12 +247,4 @@ function _render(dt, newTime) {
 
 }
 
-mobile.pass(function() {
-    quickLoader.add('images/logo.png');
-    quickLoader.add('images/normal.jpg');
-    quickLoader.start(function(percent) {
-        if(percent === 1) {
-            init();
-        }
-    });
-});
+mobile.pass(init);

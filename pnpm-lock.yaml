@@ -38,9 +38,6 @@ importers:
       mout:
         specifier: '0.11'
         version: 0.11.1
-      quick-loader:
-        specifier: ^0.1.4
-        version: 0.1.19
       stats.js:
         specifier: mrdoob/stats.js
         version: https://codeload.github.com/mrdoob/stats.js/tar.gz/71e88f65280fd5c6e91d1f84f0f633d372ed7eae
@@ -439,9 +436,6 @@ packages:
   min-signal@0.0.5:
     resolution: {integrity: sha512-huE3c7oAKcTO5Or1G+yZXK2MPHcihzagY51xmqo8dZBtH92yF0NnP9zOoVJxqPBGOfKwJ/MtJ8sngxFD2jk5nQ==}
 
-  min-signal@0.0.8:
-    resolution: {integrity: sha512-yijzIneCz3RnsNU/3UfUQdqbUojNt8MbOzVzIWU6odgTCqoKl696YyY5fA1gFCL2TGOjHqUxmCval8oU4jC2Yg==}
-
   minimist@0.0.8:
     resolution: {integrity: sha512-miQKw5Hv4NS1Psg2517mV4e4dYNaO3++hjAvLOAzKqZ61rH8NS1SK+vbfBWZ5PY/Me/bEWhUwqMghEW5Fb9T7Q==}
 
@@ -450,9 +444,6 @@ packages:
 
   mout@0.11.1:
     resolution: {integrity: sha512-pK9VNiLE3QgGBrC/3ICAscwOLU7oTNeK2l32uqNAioBYtB2tQAfSsGDNChUlk7CP23126mc5lUt6+na9FlN8JA==}
-
-  mout@1.1.0:
-    resolution: {integrity: sha512-XsP0vf4As6BfqglxZqbqQ8SR6KQot2AgxvR0gG+WtUkf90vUXchMOZQtPf/Hml1rEffJupqL/tIrU6EYhsUQjw==}
 
   murmurhash-js@1.0.0:
     resolution: {integrity: sha512-TvmkNhkv8yct0SVBSy+o8wYzXjE4Zz3PCesbfs8HiCXXdcTuocApFv11UWlNFWKYsP2okqrhb7JNlSm9InBhIw==}
@@ -500,9 +491,6 @@ packages:
 
   process-nextick-args@2.0.1:
     resolution: {integrity: sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==}
-
-  quick-loader@0.1.19:
-    resolution: {integrity: sha512-GLm7pPhdE9wS+Q84Fm4jEzg4HrFdKT53BV+pAVSjD/S/aC/YmJkTDdDUUa8dMihaf0zWTsKabCae5bszwGv26A==}
 
   quote-stream@0.0.0:
     resolution: {integrity: sha512-m4VtvjAMx00wgAS6eOy50ZDat1EBQeFKBIrtF/oxUt0MenEI33y7runJcRiOihc+JBBIt2aFFJhILIh4e9shJA==}
@@ -998,15 +986,11 @@ snapshots:
 
   min-signal@0.0.5: {}
 
-  min-signal@0.0.8: {}
-
   minimist@0.0.8: {}
 
   minimist@1.2.8: {}
 
   mout@0.11.1: {}
-
-  mout@1.1.0: {}
 
   murmurhash-js@1.0.0: {}
 
@@ -1043,12 +1027,6 @@ snapshots:
   prefix-style@1.0.0: {}
 
   process-nextick-args@2.0.1: {}
-
-  quick-loader@0.1.19:
-    dependencies:
-      computed-style: 0.3.0
-      min-signal: 0.0.8
-      mout: 1.1.0
 
   quote-stream@0.0.0:
     dependencies:

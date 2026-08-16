@@ -87,19 +87,8 @@ function _initReflection() {
         THREE.UniformsLib.shadowmap
     ]);
 
-    var normalsTexture = new THREE.Texture();
+    var normalsTexture = new THREE.TextureLoader().load('images/normal.jpg');
     normalsTexture.wrapS = normalsTexture.wrapT = THREE.RepeatWrapping;
-    var img = new Image();
-    img.src = 'images/normal.jpg';
-    if(img.width) {
-        normalsTexture.image = img;
-        normalsTexture.needsUpdate = true;
-    } else {
-        img.onload = function(){
-            normalsTexture.image = img;
-            normalsTexture.needsUpdate = true;
-        };
-    }
     _uniforms.normalSampler = { type: 't', value: normalsTexture};
     _uniforms.mirrorSampler = { type: 't', value: _texture};
     _uniforms.alpha = { type: 'f', value: 1.0 };

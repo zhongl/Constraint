@@ -39,25 +39,6 @@ body {
     color: #ccc;
 }
 
-.logo {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 480px;
-    height: 530px;
-    margin-left: -240px;
-    margin-top: -265px;
-    background-size: 480px 530px;
-    background-image: url(../images/logo.png);
-    pointer-events: none;
-    opacity: 0;
-}
-/*@media (max-width: 960px) {
-    .logo {
-        left: 50%;
-    }
-}*/
-
 .footer {
     position: absolute;
     text-align: right;
