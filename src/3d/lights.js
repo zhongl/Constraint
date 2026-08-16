@@ -1,23 +1,19 @@
-var settings = require('../core/settings');
-var THREE = require('three');
+import settings from '../core/settings';
+import THREE from 'three';
 
-var undef;
-
-var mesh = exports.mesh = undef;
-var spot = exports.spot = undef;
-exports.init = init;
-exports.update = update;
+export var mesh;
+export var spot;
 
 var _moveTime = 0;
 
-function init() {
+export function init() {
 
-    mesh = exports.mesh = new THREE.Object3D();
+    mesh = new THREE.Object3D();
 
     var ambient = new THREE.AmbientLight( 0x999999 );
     mesh.add( ambient );
 
-    spot = exports.spot = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2, 1 );
+    spot = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2, 1 );
     spot.position.x = 200;
     spot.position.y = 500;
     spot.position.z = 200;
@@ -39,7 +35,7 @@ function init() {
 
 }
 
-function update(dt, camera) {
+export function update(dt, camera) {
     _moveTime += 0;//dt * settings.lightSpeed;
     var angle = _moveTime * 0.0005 - 0.2;
     // mesh.position.x = Math.cos(angle) * 400;

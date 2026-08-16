@@ -1,4 +1,4 @@
-var THREE = require('three');
+import THREE from 'three';
 
 var threeChunkReplaceRegExp = /\/\/\s?chunk_replace\s(.+)([\d\D]+)\/\/\s?end_chunk_replace/gm;
 var threeChunkRegExp = /\/\/\s?chunk\(\s?(\w+)\s?\);/g;
@@ -48,4 +48,4 @@ function parse(shader) {
     return _glslifyGlobalParse(shader);
 }
 
-module.exports = parse;
+export default parse;

@@ -1,19 +1,24 @@
-var parse = require('mout/queryString/parse');
-var query = exports.query = parse(window.location.href.replace('#','?'));
+import parse from 'mout/queryString/parse';
 
-// need restart
-exports.useStats = false;
-exports.textureSize = 128;
-exports.lineAmount = 65536;
+const settings = {
+    query: parse(window.location.href.replace('#','?')),
 
-// lines
-exports.followMouse = false;
-exports.constraintRatio = 0.07;
-exports.useWhiteNodes = false;
-exports.whiteNodesRatio = 1;
+    // need restart
+    useStats: false,
+    textureSize: 128,
+    lineAmount: 65536,
 
-exports.useReflectedGround = true;
+    // lines
+    followMouse: false,
+    constraintRatio: 0.07,
+    useWhiteNodes: false,
+    whiteNodesRatio: 1,
 
-exports.isWhite = false;
-exports.whiteRatio = 0;
+    useReflectedGround: true,
 
+    isWhite: false,
+    whiteRatio: 0
+};
+
+export const query = settings.query;
+export default settings;

@@ -1,25 +1,19 @@
-var settings = require('../core/settings');
-var THREE = require('three');
+import settings from '../core/settings';
+import THREE from 'three';
+import glslify from 'glslify';
+import shaderParse from '../helpers/shaderParse';
 
-var undef;
-
-var glslify = require('glslify');
-var shaderParse = require('../helpers/shaderParse');
-
-var mesh = exports.mesh = undef;
-
-exports.init = init;
-exports.resize = resize;
-exports.update = update;
+export var mesh;
+export var alphaUniform;
 
 var _resolution;
 var _uTime;
 
-function init() {
+export function init() {
     var geometry = new THREE.PlaneBufferGeometry( 2, 2);
     var material = new THREE.ShaderMaterial( {
         uniforms: {
-            uAlpha : exports.alphaUniform = {type : 'f', value: 1 },
+            uAlpha : alphaUniform = {type : 'f', value: 1 },
             uTime : _uTime = {type : 'f', value: 0 },
             uResolution : {type : 'v2', value: _resolution = new THREE.Vector2() }
         },
@@ -31,16 +25,16 @@ function init() {
         depthTest: false
     });
 
-    mesh = exports.mesh = new THREE.Mesh( geometry, material );
+    mesh = new THREE.Mesh( geometry, material );
     mesh.frustumCulled = false;
     mesh.renderOrder = 1024;
 
 }
 
-function resize(width, height) {
+export function resize(width, height) {
     _resolution.set(width, height);
 }
 
-function update(dt) {
+export function update(dt) {
     _uTime.value = (_uTime.value + dt) % 15171;
 }

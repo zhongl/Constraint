@@ -1,10 +1,7 @@
-var settings = require('../core/settings');
-var THREE = require('three');
-
-var undef;
-
-var glslify = require('glslify');
-var shaderParse = require('../helpers/shaderParse');
+import settings from '../core/settings';
+import THREE from 'three';
+import glslify from 'glslify';
+import shaderParse from '../helpers/shaderParse';
 
 var _copyShader;
 var _velocityShader;
@@ -20,16 +17,13 @@ var _fboScene;
 var _fboCamera;
 var _time = 0;
 
-var TEXTURE_SIZE = exports.TEXTURE_SIZE = settings.textureSize;
-var AMOUNT = exports.AMOUNT = TEXTURE_SIZE * TEXTURE_SIZE;
+export var TEXTURE_SIZE = settings.textureSize;
+export var AMOUNT = TEXTURE_SIZE * TEXTURE_SIZE;
 
-exports.init = init;
-exports.update = update;
+export var positionRenderTarget;
+export var prevPositionRenderTarget;
 
-exports.positionRenderTarget = undef;
-exports.prevPositionRenderTarget = undef;
-
-function init(renderer) {
+export function init(renderer) {
 
     _renderer = renderer;
 
@@ -193,7 +187,7 @@ function _createPositionTexture() {
     return texture;
 }
 
-function update(dt) {
+export function update(dt) {
 
     _time += dt;
 
@@ -210,8 +204,8 @@ function update(dt) {
 
     _updatePosition(dt);
 
-    exports.positionRenderTarget = _positionRenderTarget;
-    exports.prevPositionRenderTarget = _positionRenderTarget2;
+    positionRenderTarget = _positionRenderTarget;
+    prevPositionRenderTarget = _positionRenderTarget2;
 }
 
 

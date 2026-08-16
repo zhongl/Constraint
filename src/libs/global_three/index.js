@@ -1,1 +1,1 @@
-module.exports = window.THREE;
+export default window.THREE;

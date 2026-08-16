@@ -1,23 +1,23 @@
-var quickLoader = require('quick-loader');
-var dat = require('dat.gui');
-// var Stats = require('stats.js');
-var css = require('dom-css');
+import quickLoader from 'quick-loader';
+import dat from 'dat.gui';
+// import Stats from 'stats.js';
+import css from 'dom-css';
+import THREE from 'three';
+
+import OrbitControls from './controls/OrbitControls';
+import settings from './core/settings';
+
+import * as fbo from './3d/fbo';
+import * as lights from './3d/lights';
+import * as lines from './3d/lines';
+import * as nodes from './3d/nodes';
+import * as ground from './3d/ground';
+// import * as vignette from './3d/vignette';
+import * as reflectedGround from './3d/reflectedGround';
+import * as math from './utils/math';
+import * as mobile from './fallback/mobile';
+
 var raf = window.requestAnimationFrame.bind(window);
-
-var THREE = require('three');
-
-var OrbitControls = require('./controls/OrbitControls');
-var settings = require('./core/settings');
-
-var fbo = require('./3d/fbo');
-var lights = require('./3d/lights');
-var lines = require('./3d/lines');
-var nodes = require('./3d/nodes');
-var ground = require('./3d/ground');
-// var vignette = require('./3d/vignette');
-var reflectedGround = require('./3d/reflectedGround');
-var math = require('./utils/math');
-var mobile = require('./fallback/mobile');
 
 
 var undef;

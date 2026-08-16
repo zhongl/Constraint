@@ -1,4 +1,4 @@
-//var THREE = require('three');
+import THREE from 'three';
 
 /**
  * @author qiao / https://github.com/qiao
@@ -714,4 +714,4 @@ THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype )
 THREE.OrbitControls.prototype.constructor = THREE.OrbitControls;
 
 
-module.exports = THREE.OrbitControls;
+export default THREE.OrbitControls;

@@ -1,16 +1,9 @@
-var settings = require('../core/settings');
-var THREE = require('three');
-var glslify = require('glslify');
-var shaderParse = require('../helpers/shaderParse');
-var math = require('../utils/math');
-var lights = require('./lights');
-
-var undef;
-
-exports.init = init;
-exports.updateReflectionTextureMatrix = updateReflectionTextureMatrix;
-exports.renderReflection = renderReflection;
-exports.update = update;
+import settings from '../core/settings';
+import THREE from 'three';
+import glslify from 'glslify';
+import shaderParse from '../helpers/shaderParse';
+import * as math from '../utils/math';
+import * as lights from './lights';
 
 /**
  *
@@ -21,8 +14,8 @@ exports.update = update;
  * @author Jonas Wagner / http://29a.ch/ && http://29a.ch/slides/2012/webglwater/ : Water shader explanations in WebGL
  */
 
-var mesh = exports.mesh = undef;
-var reflection = exports.reflection = undef;
+export var mesh;
+export var reflection;
 
 var _clipBias;
 
@@ -46,7 +39,7 @@ var _uniforms;
 var BLACK = new THREE.Color(0x000000);
 var WHITE = new THREE.Color(0xb2b2b2);
 
-function init(renderer, scene, camera) {
+export function init(renderer, scene, camera) {
 
     _renderer = renderer;
     _scene = scene;
@@ -59,7 +52,7 @@ function init(renderer, scene, camera) {
 
 function _initMesh() {
     var geometry = new THREE.PlaneGeometry( 4000, 4000 );
-    mesh = exports.mesh = new THREE.Mesh( geometry, _material );
+    mesh = new THREE.Mesh( geometry, _material );
 
     mesh.position.y = -200;
     mesh.rotation.x = -1.57;
@@ -68,7 +61,7 @@ function _initMesh() {
 
 function _initReflection() {
 
-    reflection = exports.reflection = new THREE.Object3D();
+    reflection = new THREE.Object3D();
 
     reflection.matrixNeedsUpdate = true;
 
@@ -137,7 +130,7 @@ function _initReflection() {
 }
 
 
-function updateReflectionTextureMatrix () {
+export function updateReflectionTextureMatrix () {
 
     mesh.updateMatrixWorld();
     _camera.updateMatrixWorld();
@@ -216,7 +209,7 @@ function updateReflectionTextureMatrix () {
 
 }
 
-function renderReflection () {
+export function renderReflection () {
 
     if ( mesh.matrixNeedsUpdate ) updateReflectionTextureMatrix();
     mesh.matrixNeedsUpdate = true;
@@ -227,7 +220,7 @@ function renderReflection () {
 
 }
 
-function update() {
+export function update() {
 
     var useReflectedGround = settings.useReflectedGround;
     mesh.visible = useReflectedGround;

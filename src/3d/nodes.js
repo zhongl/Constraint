@@ -1,22 +1,17 @@
-var settings = require('../core/settings');
-var THREE = require('three');
-var shaderParse = require('../helpers/shaderParse');
-var glslify = require('glslify');
+import settings from '../core/settings';
+import THREE from 'three';
+import shaderParse from '../helpers/shaderParse';
+import glslify from 'glslify';
 
-var fbo = require('./fbo');
-var math = require('../utils/math');
+import * as fbo from './fbo';
+import * as math from '../utils/math';
 
-var undef;
-
-exports.init = init;
-exports.update = update;
-
-var mesh = exports.mesh = undef;
+export var mesh;
 
 var _geometry;
 var _material;
 
-function init() {
+export function init() {
 
     var PARTICLE_AMOUNT = fbo.AMOUNT;
     var TEXTURE_SIZE = fbo.TEXTURE_SIZE;
@@ -48,11 +43,11 @@ function init() {
         fog: true
     });
 
-    mesh = exports.mesh = new THREE.Points(_geometry, _material);
+    mesh = new THREE.Points(_geometry, _material);
 
 }
 
-function update(dt) {
+export function update(dt) {
 
     mesh.visible = settings.useWhiteNodes;
 
