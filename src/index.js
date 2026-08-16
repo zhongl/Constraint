@@ -1,8 +1,8 @@
 var quickLoader = require('quick-loader');
-var dat = require('dat-gui');
+var dat = require('dat.gui');
 // var Stats = require('stats.js');
 var css = require('dom-css');
-var raf = require('raf');
+var raf = window.requestAnimationFrame.bind(window);
 
 var THREE = require('three');
 

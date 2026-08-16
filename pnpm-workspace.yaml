@@ -2,3 +2,5 @@ allowBuilds:
   bufferutil: false
   fsevents: false
   utf-8-validate: false
+patchedDependencies:
+  dat.gui@0.7.9: patches/dat.gui@0.7.9.patch

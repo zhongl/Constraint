@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  dat.gui@0.7.9: 68fca4fbe64025a83362371bb421689668ad3630f03d094d3bfbae36f0b31282
+
 importers:
 
   .:
@@ -11,9 +14,9 @@ importers:
       computed-style:
         specifier: 0.3.0
         version: 0.3.0
-      dat-gui:
-        specifier: 0.5.0
-        version: 0.5.0
+      dat.gui:
+        specifier: ^0.7.9
+        version: 0.7.9(patch_hash=68fca4fbe64025a83362371bb421689668ad3630f03d094d3bfbae36f0b31282)
       dom-css:
         specifier: ^1.1.1
         version: 1.1.2
@@ -38,9 +41,6 @@ importers:
       quick-loader:
         specifier: ^0.1.4
         version: 0.1.19
-      raf:
-        specifier: 3.0.0
-        version: 3.0.0
       stats.js:
         specifier: mrdoob/stats.js
         version: https://codeload.github.com/mrdoob/stats.js/tar.gz/71e88f65280fd5c6e91d1f84f0f633d372ed7eae
@@ -227,10 +227,8 @@ packages:
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
 
-  dat-gui@0.5.0:
-    resolution: {integrity: sha512-k5iJeovXcluGh+T0hyC4C6plENCr901M0iW7p4tZe31iNhWu6HjnOjcKo7lLftpWHI8qXj+E8nVBQzin9HqZDA==}
-    engines: {node: '>= 0.8.0'}
-    deprecated: 'Use the official dat.gui: https://www.npmjs.com/package/dat.gui'
+  dat.gui@0.7.9:
+    resolution: {integrity: sha512-sCNc1OHobc+Erc1HqiswYgHdVNpSJUlk/Hz8vzOCsER7rl+oF/4+v8GXFUyCgtXpoCX6+bnmg07DedLvBLwYKQ==}
 
   detect-libc@2.1.2:
     resolution: {integrity: sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==}
@@ -554,9 +552,6 @@ packages:
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
 
-  performance-now@0.1.4:
-    resolution: {integrity: sha512-iaeVTVGLcGTsN9WVFTV9YZH6gYD+SurpzHdDxeqRxqkK3IgfQiexetIjlkNSUIeV9HljjwT07jv0fAxsDuGSHg==}
-
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -586,9 +581,6 @@ packages:
 
   quote-stream@0.0.0:
     resolution: {integrity: sha512-m4VtvjAMx00wgAS6eOy50ZDat1EBQeFKBIrtF/oxUt0MenEI33y7runJcRiOihc+JBBIt2aFFJhILIh4e9shJA==}
-
-  raf@3.0.0:
-    resolution: {integrity: sha512-4JCRWII8Fj3wkOOszRotlBx1mSumnEOC1djR3g42jU5ZOyH/R11iCt3zAQeJz/N2jPt0SMvPBu7VfLOdPuGuMg==}
 
   readable-stream@1.0.34:
     resolution: {integrity: sha512-ok1qVCJuRkNmvebYikljxJA/UEsKwLl2nI1OmaqAu4/UE+h0wKCHok4XkL/gvi39OacXvw59RJUOFUkDib2rHg==}
@@ -900,7 +892,7 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  dat-gui@0.5.0: {}
+  dat.gui@0.7.9(patch_hash=68fca4fbe64025a83362371bb421689668ad3630f03d094d3bfbae36f0b31282): {}
 
   detect-libc@2.1.2: {}
 
@@ -1191,8 +1183,6 @@ snapshots:
 
   path-parse@1.0.7: {}
 
-  performance-now@0.1.4: {}
-
   picocolors@1.1.1: {}
 
   picomatch@2.3.2: {}
@@ -1221,10 +1211,6 @@ snapshots:
     dependencies:
       minimist: 0.0.8
       through2: 0.4.2
-
-  raf@3.0.0:
-    dependencies:
-      performance-now: 0.1.4
 
   readable-stream@1.0.34:
     dependencies:

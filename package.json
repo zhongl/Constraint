@@ -6,7 +6,7 @@
   "main": "index.js",
   "dependencies": {
     "computed-style": "0.3.0",
-    "dat-gui": "0.5.0",
+    "dat.gui": "^0.7.9",
     "dom-css": "^1.1.1",
     "gl-matrix": "^2.3.1",
     "glsl-noise": "^0.0.0",
@@ -15,7 +15,6 @@
     "min-signal": "^0.0.5",
     "mout": "0.11",
     "quick-loader": "^0.1.4",
-    "raf": "3.0.0",
     "stats.js": "mrdoob/stats.js",
     "three": "file:./src/libs/global_three/",
     "underscore": "^1.8.3",
@@ -29,7 +28,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "pnpm build && vite preview"
   },
   "author": "",
   "license": "MIT",
