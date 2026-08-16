@@ -3,12 +3,7 @@ import { defineConfig } from 'vite';
 import glslify from 'glslify';
 
 function bundleShader(file) {
-    return new Promise(function(resolve, reject) {
-        glslify.bundle(file, { basedir: path.dirname(file) }, function(err, source) {
-            if(err) reject(err);
-            else resolve(source);
-        });
-    });
+    return glslify.file(file, { basedir: path.dirname(file) });
 }
 
 function glslifyShader() {
