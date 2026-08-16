@@ -27,6 +27,6 @@ export function init() {
 }
 
 export function update() {
-    mesh.visible = !settings.useReflectedGround;
+    mesh.visible = true;
     _material.color.copy(BLACK).lerp(WHITE, settings.whiteRatio);
 }

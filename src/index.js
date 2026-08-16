@@ -12,7 +12,6 @@ import * as lines from './3d/lines';
 import * as nodes from './3d/nodes';
 import * as ground from './3d/ground';
 // import * as vignette from './3d/vignette';
-import * as reflectedGround from './3d/reflectedGround';
 import * as math from './utils/math';
 
 var raf = window.requestAnimationFrame.bind(window);
@@ -111,9 +110,6 @@ function init() {
     // vignette.init(_renderer);
     // _scene.add(vignette.mesh);
 
-    reflectedGround.init(_renderer, _scene, _camera);
-    _scene.add(reflectedGround.mesh);
-
     _gui = new GUI();
     var linesGui = _gui.addFolder('Motion');
     linesGui.add(settings, 'constraintRatio', 0, 0.15).name('constraint ratio');
@@ -121,7 +117,6 @@ function init() {
 
     var envGui = _gui.addFolder('Rendering');
     linesGui.add(settings, 'useWhiteNodes').name('white nodes');
-    envGui.add(settings, 'useReflectedGround').name('reflected ground');
     envGui.add(settings, 'isWhite').name('white theme').listen();
 
     var preventDefault = function(evt){evt.preventDefault();this.blur();};
@@ -229,7 +224,6 @@ function _render(dt, newTime) {
     // vignette.update(dt);
 
     ground.update();
-    reflectedGround.update();
 
     _renderer.render(_scene, _camera);
 

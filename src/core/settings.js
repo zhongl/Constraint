@@ -10,8 +10,6 @@ const settings = {
     useWhiteNodes: false,
     whiteNodesRatio: 1,
 
-    useReflectedGround: true,
-
     isWhite: false,
     whiteRatio: 0
 };
