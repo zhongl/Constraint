@@ -1,7 +1,8 @@
 import settings from '../core/settings';
 import THREE from 'three';
-import glslify from 'glslify';
 import shaderParse from '../helpers/shaderParse';
+import reflectedGroundVert from '../glsl/reflectedGround.vert';
+import reflectedGroundFrag from '../glsl/reflectedGround.frag';
 import * as math from '../utils/math';
 import * as lights from './lights';
 
@@ -110,8 +111,8 @@ function _initReflection() {
     _uniforms.lightPosition = { type: 'v3', value: lights.spot.position };
 
     _material = new THREE.ShaderMaterial( {
-        vertexShader: shaderParse(glslify('../glsl/reflectedGround.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/reflectedGround.frag')),
+        vertexShader: shaderParse(reflectedGroundVert),
+        fragmentShader: shaderParse(reflectedGroundFrag),
         uniforms: _uniforms,
         transparent: true,
         fog: true

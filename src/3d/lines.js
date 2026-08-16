@@ -1,7 +1,10 @@
 import settings from '../core/settings';
 import THREE from 'three';
 import shaderParse from '../helpers/shaderParse';
-import glslify from 'glslify';
+import linesVert from '../glsl/lines.vert';
+import linesFrag from '../glsl/lines.frag';
+import lineDepthVert from '../glsl/lineDepth.vert';
+import lineDepthFrag from '../glsl/lineDepth.frag';
 
 import * as fbo from './fbo';
 import * as math from '../utils/math';
@@ -48,8 +51,8 @@ export function init() {
             whiteNodesRatio: { type: 'f', value: 1 },
             whiteRatio: { type: 'f', value: 1 }
         }]),
-        vertexShader: shaderParse(glslify('../glsl/lines.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/lines.frag')),
+        vertexShader: shaderParse(linesVert),
+        fragmentShader: shaderParse(linesFrag),
         linewidth: 1,
         blending: THREE.NoBlending,
         fog: true
@@ -59,8 +62,8 @@ export function init() {
         uniforms: {
             texturePosition: { type: 't', value: null },
         },
-        vertexShader: shaderParse(glslify('../glsl/lineDepth.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/lineDepth.frag')),
+        vertexShader: shaderParse(lineDepthVert),
+        fragmentShader: shaderParse(lineDepthFrag),
         depthTest: true,
         depthWrite: true
     });

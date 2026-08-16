@@ -22,8 +22,7 @@
   },
   "devDependencies": {
     "glslify": "^5.0.2",
-    "vite": "^8.2.1",
-    "vite-plugin-commonjs": "^0.10.4"
+    "vite": "^8.2.1"
   },
   "scripts": {
     "dev": "vite",

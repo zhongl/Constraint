@@ -1,7 +1,8 @@
 import settings from '../core/settings';
 import THREE from 'three';
-import glslify from 'glslify';
 import shaderParse from '../helpers/shaderParse';
+import vignetteVert from '../glsl/vignette.vert';
+import vignetteFrag from '../glsl/vignette.frag';
 
 export var mesh;
 export var alphaUniform;
@@ -17,8 +18,8 @@ export function init() {
             uTime : _uTime = {type : 'f', value: 0 },
             uResolution : {type : 'v2', value: _resolution = new THREE.Vector2() }
         },
-        vertexShader: shaderParse(glslify('../glsl/vignette.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/vignette.frag')),
+        vertexShader: shaderParse(vignetteVert),
+        fragmentShader: shaderParse(vignetteFrag),
         blending: THREE.NormalBlending,
         transparent: true,
         depthWrite: false,

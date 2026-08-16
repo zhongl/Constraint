@@ -1,7 +1,10 @@
 import settings from '../core/settings';
 import THREE from 'three';
-import glslify from 'glslify';
 import shaderParse from '../helpers/shaderParse';
+import fboVert from '../glsl/fbo.vert';
+import fboThroughFrag from '../glsl/fboThrough.frag';
+import velocityFrag from '../glsl/velocity.frag';
+import positionFrag from '../glsl/position.frag';
 
 var _copyShader;
 var _velocityShader;
@@ -46,8 +49,8 @@ export function init(renderer) {
             resolution: { type: 'v2', value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
             texture: { type: 't', value: null }
         },
-        vertexShader: shaderParse(glslify('../glsl/fbo.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/fboThrough.frag'))
+        vertexShader: shaderParse(fboVert),
+        fragmentShader: shaderParse(fboThroughFrag)
     });
 
     _velocityShader = new THREE.ShaderMaterial({
@@ -59,8 +62,8 @@ export function init(renderer) {
             constraintRatio: { type: 'f', value: settings.constraintRatio },
             time: { type: 'f', value: 0 },
         },
-        vertexShader: shaderParse(glslify('../glsl/fbo.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/velocity.frag')),
+        vertexShader: shaderParse(fboVert),
+        fragmentShader: shaderParse(velocityFrag),
         blending: THREE.NoBlending,
         transparent: false,
         depthWrite: false,
@@ -74,8 +77,8 @@ export function init(renderer) {
             textureVelocity: { type: 't', value: null },
             time: { type: 'f', value: 0 },
         },
-        vertexShader: shaderParse(glslify('../glsl/fbo.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/position.frag')),
+        vertexShader: shaderParse(fboVert),
+        fragmentShader: shaderParse(positionFrag),
         blending: THREE.NoBlending,
         transparent: false,
         depthWrite: false,

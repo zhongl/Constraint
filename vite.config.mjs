@@ -1,33 +1,29 @@
 import path from 'node:path';
 import { defineConfig } from 'vite';
-import commonjs from 'vite-plugin-commonjs';
 import glslify from 'glslify';
 
-function glslifyInline() {
+function bundleShader(file) {
+    return new Promise(function(resolve, reject) {
+        glslify.bundle(file, { basedir: path.dirname(file) }, function(err, source) {
+            if(err) reject(err);
+            else resolve(source);
+        });
+    });
+}
+
+function glslifyShader() {
     return {
-        name: 'glslify-inline',
+        name: 'glslify-shader',
         enforce: 'pre',
-        async transform(code, id) {
-            if (!id.endsWith('.js') || !code.includes('glslify(')) return null;
+        async load(id) {
+            var file = id.split('?')[0];
+            if(!/\.(glsl|frag|vert)$/.test(file)) return null;
 
-            var dir = path.dirname(id);
-            var jobs = [];
-            var out = code.replace(/glslify\(\s*(['"])(.+?)\1\s*\)/g, function(match, quote, filename) {
-                var index = jobs.length;
-                jobs.push(new Promise(function(resolve, reject) {
-                    glslify.bundle(filename, { basedir: dir }, function(err, source) {
-                        if(err) reject(err);
-                        else resolve(source);
-                    });
-                }));
-                return '__GLSLIFY_INLINE_' + index + '__';
-            });
-
-            var sources = await Promise.all(jobs);
-            sources.forEach(function(source, index) {
-                out = out.replace('__GLSLIFY_INLINE_' + index + '__', JSON.stringify(source));
-            });
-            return { code: out, map: null };
+            var source = await bundleShader(file);
+            return {
+                code: 'export default ' + JSON.stringify(source) + ';',
+                map: null
+            };
         }
     };
 }
@@ -36,14 +32,10 @@ export default defineConfig({
     base: './',
     publicDir: 'app',
     plugins: [
-        glslifyInline(),
-        commonjs()
+        glslifyShader()
     ],
     build: {
         outDir: 'dist',
-        emptyOutDir: true,
-        commonjsOptions: {
-            include: [/node_modules/, /src/]
-        }
+        emptyOutDir: true
     }
 });

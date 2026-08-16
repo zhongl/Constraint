@@ -1,7 +1,8 @@
 import settings from '../core/settings';
 import THREE from 'three';
 import shaderParse from '../helpers/shaderParse';
-import glslify from 'glslify';
+import nodeVert from '../glsl/node.vert';
+import nodeFrag from '../glsl/node.frag';
 
 import * as fbo from './fbo';
 import * as math from '../utils/math';
@@ -35,8 +36,8 @@ export function init() {
             texturePosition: { type: 't', value: null },
             alpha: { type: 'f', value: 1 }
         }]),
-        vertexShader: shaderParse(glslify('../glsl/node.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/node.frag')),
+        vertexShader: shaderParse(nodeVert),
+        fragmentShader: shaderParse(nodeFrag),
         blending: THREE.AdditiveBlending,
         transparent: true,
         depthWrite: false,
