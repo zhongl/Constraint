@@ -5,7 +5,6 @@ var glslify = require('glslify');
 
 var fbo = require('./fbo');
 var math = require('../utils/math');
-var MeshMotionMaterial = require('./postprocessing/motionBlur/MeshMotionMaterial');
 
 var undef;
 
@@ -77,17 +76,6 @@ function init() {
     mesh.frustumCulled = false;
     mesh.customDepthMaterial = _depthMaterial;
 
-    // mesh.motionMaterial = new MeshMotionMaterial( {
-    //     uniforms: {
-    //         texturePosition: { type: 't', value: undef },
-    //         texturePrevPosition: { type: 't', value: undef }
-    //     },
-    //     vertexShader: shaderParse(glslify('../glsl/linesMotion.vert')),
-    //     depthTest: true,
-    //     depthWrite: true,
-    //     blending: THREE.NoBlending
-    // });
-
 }
 
 function update(dt) {
@@ -95,8 +83,6 @@ function update(dt) {
     var positionRenderTarget = fbo.positionRenderTarget;
     _material.uniforms.texturePosition.value = positionRenderTarget;
     _depthMaterial.uniforms.texturePosition.value = positionRenderTarget;
-    // mesh.motionMaterial.uniforms.texturePrevPosition.value = fbo.prevPositionRenderTarget;
-
     _material.uniforms.whiteNodesRatio.value = settings.whiteNodesRatio;
     _material.uniforms.whiteRatio.value = settings.whiteRatio;
 

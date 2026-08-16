@@ -19,12 +19,6 @@ var reflectedGround = require('./3d/reflectedGround');
 var math = require('./utils/math');
 var mobile = require('./fallback/mobile');
 
-var postprocessing = require('./3d/postprocessing/postprocessing');
-var motionBlur = require('./3d/postprocessing/motionBlur/motionBlur');
-var MeshMotionMaterial = require('./3d/postprocessing/motionBlur/MeshMotionMaterial');
-var fxaa = require('./3d/postprocessing/fxaa/fxaa');
-var bloom = require('./3d/postprocessing/bloom/bloom');
-var fboHelper = require('./3d/fboHelper');
 
 var undef;
 var _gui;
@@ -99,9 +93,6 @@ function init() {
     _control.noPan = true;
     _control.update();
 
-    fboHelper.init(_renderer);
-    postprocessing.init(_renderer, _scene, _camera);
-
     fbo.init(_renderer);
 
     lights.init();
@@ -120,11 +111,6 @@ function init() {
     _skybox = new THREE.Mesh(new THREE.IcosahedronGeometry(128, 2), settings.ignoredMaterial);
     _skybox.renderOrder = -1024;
     _skybox.frustumCulled = false;
-    _skybox.motionMaterial = new MeshMotionMaterial({
-        depthTest: false,
-        depthWrite: false,
-        side: THREE.BackSide
-    });
     _scene.add(_skybox);
 
     // vignette.init(_renderer);
@@ -143,39 +129,6 @@ function init() {
     envGui.add(settings, 'useReflectedGround').name('reflected ground');
     envGui.add(settings, 'isWhite').name('white theme').listen();
 
-    var postprocessingGui = _gui.addFolder('Post-Processing');
-    postprocessingGui.add(settings, 'fxaa').listen();
-    motionBlur.maxDistance = 120;
-    motionBlur.motionMultiplier = 1;
-    motionBlur.linesRenderTargetScale = settings.motionBlurQualityMap[settings.query.motionBlurQuality];
-    var motionBlurControl = postprocessingGui.add(settings, 'motionBlur');
-    var motionMaxDistance = postprocessingGui.add(motionBlur, 'maxDistance', 1, 300).name('motion distance').listen();
-    var motionMultiplier = postprocessingGui.add(motionBlur, 'motionMultiplier', 0.1, 15).name('motion multiplier').listen();
-    var motionQuality = postprocessingGui.add(settings.query, 'motionBlurQuality', settings.motionBlurQualityList).name('motion quality').onChange(function(val){
-        motionBlur.linesRenderTargetScale = settings.motionBlurQualityMap[val];
-        motionBlur.resize();
-    });
-    var controlList = [motionMaxDistance, motionMultiplier, motionQuality];
-    motionBlurControl.onChange(enableGuiControl.bind(this, controlList));
-    enableGuiControl(controlList, settings.motionBlur);
-
-    var bloomControl = postprocessingGui.add(settings, 'bloom');
-    var bloomRadiusControl = postprocessingGui.add(bloom, 'blurRadius', 0, 3).name('bloom radius');
-    var bloomAmountControl = postprocessingGui.add(bloom, 'amount', 0, 3).name('bloom amount');
-    controlList = [bloomRadiusControl, bloomAmountControl];
-    bloomControl.onChange(enableGuiControl.bind(this, controlList));
-    enableGuiControl(controlList, settings.bloom);
-
-    function enableGuiControl(controls, flag) {
-        controls = controls.length ? controls : [controls];
-        var control;
-        for(var i = 0, len = controls.length; i < len; i++) {
-            control = controls[i];
-            control.__li.style.pointerEvents = flag ? 'auto' : 'none';
-            control.domElement.parentNode.style.opacity = flag ? 1 : 0.1;
-        }
-    }
-
     var preventDefault = function(evt){evt.preventDefault();this.blur();};
     Array.prototype.forEach.call(_gui.domElement.querySelectorAll('input[type="checkbox"],select'), function(elem){
         elem.onkeyup = elem.onkeydown = preventDefault;
@@ -187,7 +140,6 @@ function init() {
     if(window.screen.width > 480) {
         linesGui.open();
         envGui.open();
-        postprocessingGui.open();
     }
 
     _logo = document.querySelector('.logo');
@@ -240,8 +192,6 @@ function _onResize() {
     _width = window.innerWidth;
     _height = window.innerHeight;
 
-    postprocessing.resize(_width, _height);
-
     _camera.aspect = _width / _height;
     _camera.updateProjectionMatrix();
     _renderer.setSize(_width, _height);
@@ -289,12 +239,7 @@ function _render(dt, newTime) {
     ground.update();
     reflectedGround.update();
 
-    fxaa.enabled = !!settings.fxaa;
-    motionBlur.enabled = !!settings.motionBlur;
-    bloom.enabled = !!settings.bloom;
-
-    // _renderer.render(_scene, _camera);
-    postprocessing.render(dt, newTime);
+    _renderer.render(_scene, _camera);
 
     document.documentElement.classList.toggle('is-white', settings.isWhite);
     var ratio = Math.min((1 - Math.abs(_initAnimation - 0.5) * 2) * 1.2, 1);
