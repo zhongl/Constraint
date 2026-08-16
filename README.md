@@ -5,8 +5,10 @@
 [Live demo](http://www.edankwan.com/experiments/constraint/) | [Video](https://www.youtube.com/watch?v=LCDBNS7FkrA)
 
 ## Development and deployment
-- dev: `node dev`
-- deploy: `node build`
+- install: `pnpm install`
+- dev: `pnpm dev`
+- build: `pnpm build`
+- preview production build: `pnpm preview`
 
 ## License
 This experiment is under MIT License.

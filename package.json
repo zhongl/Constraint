@@ -1,5 +1,5 @@
 {
-  "name": "budo-boilderplate",
+  "name": "constraint",
   "version": "1.0.0",
   "private": true,
   "description": "",
@@ -22,25 +22,16 @@
     "ws": "^0.8.0"
   },
   "devDependencies": {
-    "browserify": "^13.0.0",
-    "budo": "^7.1.0",
-    "bundle-collapser": "^1.2.1",
-    "dirlist": "^1.0.2",
     "glslify": "^5.0.2",
-    "hasha": "^2.2.0",
-    "installify": "^1.0.2",
-    "map-limit": "0.0.1",
-    "minifyify": "^7.1.0",
-    "minimist": "^1.2.0",
-    "opn": "^4.0.0",
-    "pinkie-promise": "^2.0.0",
-    "simple-html-index": "^1.1.2",
-    "uglify-js": "^2.6.1"
+    "vite": "^8.2.1",
+    "vite-plugin-commonjs": "^0.10.4"
   },
   "scripts": {
-    "dev": "node dev.js",
-    "build": "node build.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "pnpm@11.21.0"
 }
