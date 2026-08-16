@@ -1,8 +1,4 @@
-import parse from 'mout/queryString/parse';
-
 const settings = {
-    query: parse(window.location.href.replace('#','?')),
-
     // need restart
     useStats: false,
     textureSize: 128,
@@ -20,5 +16,4 @@ const settings = {
     whiteRatio: 0
 };
 
-export const query = settings.query;
 export default settings;
