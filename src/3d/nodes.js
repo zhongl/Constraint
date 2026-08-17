@@ -28,7 +28,7 @@ export function init() {
         positions[i3 + 2] = Math.pow(math.hash(20 + i * 31.512), 5);
     }
     _geometry = new THREE.BufferGeometry();
-    _geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
+    _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
     _material = new THREE.ShaderMaterial( {
         uniforms: THREE.UniformsUtils.merge( [
             THREE.UniformsLib.fog, {

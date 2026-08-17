@@ -41,8 +41,8 @@ export function init() {
         positions[i6 + 5] = 1;
     }
     _geometry = new THREE.BufferGeometry();
-    _geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
-    _geometry.addAttribute( 'oppositeUv', new THREE.BufferAttribute( oppositeUv, 2 ));
+    _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
+    _geometry.setAttribute( 'oppositeUv', new THREE.BufferAttribute( oppositeUv, 2 ));
     _material = new THREE.ShaderMaterial( {
         uniforms: THREE.UniformsUtils.merge( [
             THREE.UniformsLib.fog,
