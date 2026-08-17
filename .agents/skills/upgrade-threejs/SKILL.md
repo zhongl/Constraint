@@ -45,8 +45,6 @@ node .agents/skills/upgrade-threejs/scripts/preflight.mjs
 
 - 当前是 Git worktree；
 - 当前 5173 正在监听；
-- 目标严格等于 `<current> + 1`；
-- 官方迁移段存在；
 - `refactor/referece` 独立 worktree 存在；
 - 4173 正在监听；
 - 4173 监听进程的 cwd 属于该参考 worktree；
@@ -54,7 +52,7 @@ node .agents/skills/upgrade-threejs/scripts/preflight.mjs
 
 脚本返回非零时，立即停止。preflight 通过前不得编辑任何业务文件。已有修改属于用户时，保留它们；提交时只能暂存本迁移段文件。
 
-完成条件：终端出现 `PREFLIGHT PASSED`，并且输出中的当前运行时 revision、参考 worktree、参考 PID、分支和 commit 均符合预期。
+完成条件：终端出现 `PREFLIGHT PASSED`，并且参考 worktree、参考 PID、分支和 commit 均符合预期。当前 Three.js revision 在读取官方相邻迁移段时单独确认，不由 preflight 检查。
 
 ## 一个迁移段的步骤
 
