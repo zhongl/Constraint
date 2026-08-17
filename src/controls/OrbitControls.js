@@ -17,7 +17,11 @@ import THREE from 'three';
 //    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
 //    Pan - right mouse, or arrow keys / touch: three finter swipe
 
-THREE.OrbitControls = function ( object, domElement ) {
+class OrbitControls extends THREE.EventDispatcher {
+
+    constructor ( object, domElement ) {
+
+        super();
 
     this.object = object;
     this.domElement = ( domElement !== undefined ) ? domElement : document;
@@ -706,10 +710,10 @@ THREE.OrbitControls = function ( object, domElement ) {
     // force an update at start
     this.update();
 
-};
+    }
 
-THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype );
-THREE.OrbitControls.prototype.constructor = THREE.OrbitControls;
+}
 
+THREE.OrbitControls = OrbitControls;
 
-export default THREE.OrbitControls;
+export default OrbitControls;

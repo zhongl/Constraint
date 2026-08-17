@@ -38,7 +38,7 @@ print(subprocess.check_output([
   'git', 'log', '--oneline', '-5'
 ], text=True), end='')
 PY
-node .agents/skills/upgrade-threejs/scripts/preflight.mjs <current> <current+1>
+node .agents/skills/upgrade-threejs/scripts/preflight.mjs
 ```
 
 `preflight.mjs` 是硬门禁，必须确认并输出：
