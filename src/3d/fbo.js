@@ -130,7 +130,9 @@ function _updateVelocity(dt) {
     _velocityShader.uniforms.time.value = _time;
     _velocityShader.uniforms.textureVelocity.value = _velocityRenderTarget2.texture;
     _velocityShader.uniforms.texturePosition.value = _positionRenderTarget.texture;
-    _renderer.render( _fboScene, _fboCamera, _velocityRenderTarget );
+    _renderer.setRenderTarget( _velocityRenderTarget );
+    _renderer.render( _fboScene, _fboCamera );
+    _renderer.setRenderTarget( null );
 }
 
 function _updatePosition(dt) {
@@ -144,13 +146,17 @@ function _updatePosition(dt) {
     _positionShader.uniforms.time.value = _time;
     _positionShader.uniforms.textureVelocity.value = _velocityRenderTarget.texture;
     _positionShader.uniforms.texturePosition.value = _positionRenderTarget2.texture;
-    _renderer.render( _fboScene, _fboCamera, _positionRenderTarget );
+    _renderer.setRenderTarget( _positionRenderTarget );
+    _renderer.render( _fboScene, _fboCamera );
+    _renderer.setRenderTarget( null );
 }
 
 function _copyTexture(input, output) {
     _fboMesh.material = _copyShader;
     _copyShader.uniforms.texture.value = input;
-    _renderer.render( _fboScene, _fboCamera, output );
+    _renderer.setRenderTarget( output );
+    _renderer.render( _fboScene, _fboCamera );
+    _renderer.setRenderTarget( null );
 }
 
 function _createVelocityTexture() {
