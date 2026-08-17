@@ -26,12 +26,15 @@ export function init() {
     spot.shadow.camera.fov = 90;
     spot.shadow.camera.updateProjectionMatrix();
     // Preserve the r75 shadow camera across the r108 shadow matrix update.
+    var updateShadowMatrices = spot.shadow.updateMatrices;
     spot.shadow.updateMatrices = function (light, viewCamera, viewportIndex) {
-        this.camera.fov = 90;
-        this.camera.aspect = this.mapSize.width / this.mapSize.height;
-        this.camera.far = 2500;
-        this.camera.updateProjectionMatrix();
-        THREE.LightShadow.prototype.updateMatrices.call(this, light, viewCamera, viewportIndex);
+        var angle = light.angle;
+        var distance = light.distance;
+        light.angle = Math.PI / 4;
+        light.distance = 2500;
+        updateShadowMatrices.call(this, light, viewCamera, viewportIndex);
+        light.angle = angle;
+        light.distance = distance;
     };
 
     spot.shadow.bias = -0.003;
