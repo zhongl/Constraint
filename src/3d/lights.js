@@ -10,16 +10,16 @@ export function init() {
 
     mesh = new THREE.Object3D();
 
-    var ambient = new THREE.AmbientLight( 0x999999 );
+    var ambient = new THREE.AmbientLight( 0x999999, Math.PI );
     mesh.add( ambient );
 
-    spot = new THREE.SpotLight( 0xffffff, 1, 0, Math.PI / 2, 1 );
+    spot = new THREE.SpotLight( 0xffffff, Math.PI, 0, Math.PI / 2, 1 );
     spot.position.x = 200;
     spot.position.y = 500;
     spot.position.z = 200;
     spot.target.position.set( 0, 0, 0 );
 
-    spot.decay = 1;
+    spot.decay = 0;
     spot.castShadow = true;
 
     spot.shadow.camera.near = 100;
