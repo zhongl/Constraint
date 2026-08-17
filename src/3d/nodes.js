@@ -31,8 +31,7 @@ export function init() {
     _geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
     _material = new THREE.ShaderMaterial( {
         uniforms: THREE.UniformsUtils.merge( [
-            THREE.UniformsLib.fog,
-            THREE.UniformsLib.shadowmap, {
+            THREE.UniformsLib.fog, {
             texturePosition: { type: 't', value: null },
             alpha: { type: 'f', value: 1 }
         }]),

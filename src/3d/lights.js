@@ -21,15 +21,13 @@ export function init() {
 
     spot.castShadow = true;
 
-    spot.shadowCameraNear = 100;
-    spot.shadowCameraFar = 2500;
-    spot.shadowCameraFov = 90;
+    spot.shadow.camera.near = 100;
+    spot.shadow.camera.far = 2500;
+    spot.shadow.camera.fov = 90;
+    spot.shadow.camera.updateProjectionMatrix();
 
-    spot.shadowBias = 0.00003;
-    spot.shadowDarkness = 1;
-
-    spot.shadowMapWidth = 1024;
-    spot.shadowMapHeight = 2048;
+    spot.shadow.bias = 0.00003;
+    spot.shadow.mapSize.set( 1024, 2048 );
 
     mesh.add( spot );
 

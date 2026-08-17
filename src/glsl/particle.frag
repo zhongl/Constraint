@@ -1,7 +1,10 @@
 
 // chunk(common);
 // chunk(fog_pars_fragment);
+// chunk(bsdfs);
+// chunk(lights_pars);
 // chunk(shadowmap_pars_fragment);
+// chunk(shadowmask_pars_fragment);
 
 #ifdef USE_BILLBOARD
 
@@ -15,7 +18,7 @@ void main() {
 
     vec3 outgoingLight = vec3(1.0);
 
-    // chunk(shadowmap_fragment);
+    vec3 shadowMask = vec3( getShadowMask() );
 
     outgoingLight *= 0.1 + pow(shadowMask, vec3(1.5)) * 0.9;
 

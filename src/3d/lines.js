@@ -46,7 +46,8 @@ export function init() {
     _material = new THREE.ShaderMaterial( {
         uniforms: THREE.UniformsUtils.merge( [
             THREE.UniformsLib.fog,
-            THREE.UniformsLib.shadowmap, {
+            THREE.UniformsLib.ambient,
+            THREE.UniformsLib.lights, {
             texturePosition: { type: 't', value: null },
             whiteNodesRatio: { type: 'f', value: 1 },
             whiteRatio: { type: 'f', value: 1 }
@@ -55,6 +56,7 @@ export function init() {
         fragmentShader: shaderParse(linesFrag),
         linewidth: 1,
         blending: THREE.NoBlending,
+        lights: true,
         fog: true
     });
 

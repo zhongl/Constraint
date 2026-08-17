@@ -1,7 +1,10 @@
 
 // chunk(common);
 // chunk(fog_pars_fragment);
+// chunk(bsdfs);
+// chunk(lights_pars);
 // chunk(shadowmap_pars_fragment);
+// chunk(shadowmask_pars_fragment);
 
 varying float vBrightness;
 varying float vSide;
@@ -13,7 +16,7 @@ void main() {
 
     vec3 outgoingLight = vec3(1.0);
 
-    // chunk(shadowmap_fragment);
+    vec3 shadowMask = vec3( getShadowMask() );
 
     outgoingLight = 0.05 + pow(shadowMask, vec3(1.5 - whiteRatio * 1.0)) * 0.95 + vBrightness * (1.0 - whiteRatio * 0.65);
 
