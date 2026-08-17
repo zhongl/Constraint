@@ -1,3 +1,5 @@
+// chunk(common);
+
 attribute vec2 oppositeUv;
 
 uniform sampler2D texturePosition;
@@ -21,6 +23,7 @@ void main() {
     vBrightness = brightness * whiteNodesRatio;
 
     // chunk(fog_vertex);
+    vec3 transformedNormal = vec3( 0.0, 0.0, 1.0 );
     // chunk(shadowmap_vertex);
 
     gl_Position = projectionMatrix * mvPosition;

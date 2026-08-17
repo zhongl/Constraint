@@ -35,7 +35,9 @@ export function init(renderer) {
         alert( 'No support for vertex shader textures!' );
         return;
     }
-    if ( !gl.getExtension( 'OES_texture_float' )) {
+    var isWebGL2 = typeof WebGL2RenderingContext !== 'undefined' &&
+        gl instanceof WebGL2RenderingContext;
+    if ( !isWebGL2 && !gl.getExtension( 'OES_texture_float' )) {
         alert( 'No OES_texture_float support for float textures!' );
         return;
     }
@@ -47,7 +49,7 @@ export function init(renderer) {
     _copyShader = new THREE.ShaderMaterial({
         uniforms: {
             resolution: { type: 'v2', value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
-            texture: { type: 't', value: null }
+            inputTexture: { type: 't', value: null }
         },
         vertexShader: shaderParse(fboVert),
         fragmentShader: shaderParse(fboThroughFrag)
@@ -153,7 +155,7 @@ function _updatePosition(dt) {
 
 function _copyTexture(input, output) {
     _fboMesh.material = _copyShader;
-    _copyShader.uniforms.texture.value = input;
+    _copyShader.uniforms.inputTexture.value = input;
     _renderer.setRenderTarget( output );
     _renderer.render( _fboScene, _fboCamera );
     _renderer.setRenderTarget( null );

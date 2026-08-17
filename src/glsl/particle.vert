@@ -1,3 +1,5 @@
+// chunk(common);
+
 attribute vec2 fboUV;
 uniform sampler2D texturePosition;
 
@@ -35,6 +37,7 @@ void main() {
     #endif
 
     // chunk(fog_vertex);
+    vec3 transformedNormal = vec3( 0.0, 0.0, 1.0 );
     // chunk(shadowmap_vertex);
 
 

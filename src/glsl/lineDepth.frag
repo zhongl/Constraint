@@ -12,5 +12,5 @@ return res;
 
 void main() {
 
-    gl_FragData[ 0 ] = pack_depth( gl_FragCoord.z );
+    gl_FragColor = pack_depth( gl_FragCoord.z );
 }

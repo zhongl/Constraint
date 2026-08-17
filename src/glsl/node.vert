@@ -1,3 +1,5 @@
+// chunk(common);
+
 attribute vec2 oppositeUv;
 
 uniform sampler2D texturePosition;
@@ -17,6 +19,7 @@ void main() {
     vec4 mvPosition = viewMatrix * worldPosition;
 
     // chunk(fog_vertex);
+    vec3 transformedNormal = vec3( 0.0, 0.0, 1.0 );
     // chunk(shadowmap_vertex);
 
     float size = 3.0 + position.z * 80.0;
