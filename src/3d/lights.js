@@ -38,7 +38,7 @@ export function init() {
         light.distance = distance;
     };
 
-    spot.shadow.bias = -0.003;
+    spot.shadow.bias = 0;
     spot.shadow.mapSize.set( 1024, 2048 );
 
     mesh.add( spot );
