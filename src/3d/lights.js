@@ -25,6 +25,8 @@ export function init() {
     spot.shadow.camera.far = 2500;
     spot.shadow.camera.fov = 90;
     spot.shadow.camera.updateProjectionMatrix();
+    // Preserve the r75 shadow camera; r76 derives far from light.distance.
+    spot.shadow.update = function () {};
 
     spot.shadow.bias = 0.00003;
     spot.shadow.mapSize.set( 1024, 2048 );

@@ -1,5 +1,6 @@
 
 // chunk(common);
+// chunk(packing);
 // chunk(fog_pars_fragment);
 // chunk(bsdfs);
 // chunk(lights_pars);
