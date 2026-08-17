@@ -500,7 +500,6 @@ THREE.OrbitControls = function ( object, domElement ) {
         if ( scope.enabled === false || scope.noZoom === true || state !== STATE.NONE ) return;
 
         event.preventDefault();
-        event.stopPropagation();
 
         var delta = 0;
 
@@ -611,7 +610,6 @@ THREE.OrbitControls = function ( object, domElement ) {
         if ( scope.enabled === false ) return;
 
         event.preventDefault();
-        event.stopPropagation();
 
         var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
 
