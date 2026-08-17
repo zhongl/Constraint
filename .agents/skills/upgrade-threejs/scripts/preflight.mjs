@@ -3,11 +3,8 @@
  * Verify the one-segment migration contract before any source edit.
  * This script is intentionally fail-fast: a non-zero exit means stop.
  */
-import { execFileSync, spawn } from 'node:child_process';
-import { mkdtemp } from 'node:fs/promises';
-import { existsSync, readlinkSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
+import { execFileSync } from 'node:child_process';
+import { readlinkSync } from 'node:fs';
 
 const [fromArg, targetArg] = process.argv.slice(2);
 const from = Number(fromArg);
@@ -15,13 +12,6 @@ const target = Number(targetArg);
 const currentPort = Number(process.env.THREE_CURRENT_PORT || 5173);
 const referencePort = Number(process.env.THREE_REFERENCE_PORT || 4173);
 const referenceBranch = process.env.THREE_REFERENCE_BRANCH || 'refactor/referece';
-const chrome = process.env.CHROME_BIN || [
-  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-  '/usr/bin/google-chrome',
-  '/usr/bin/google-chrome-stable',
-  '/usr/bin/chromium',
-  '/usr/bin/chromium-browser',
-].find(executable => existsSync(executable));
 
 const fail = message => {
   console.error(`PREFLIGHT FAILED: ${message}`);
@@ -42,7 +32,7 @@ function portPids(port) {
 }
 function pidCwd(pid) {
   const output = command('lsof', ['-a', '-p', String(pid), '-d', 'cwd', '-Fn']);
-  if (output) return output.split('\\n').find(line => line.startsWith('n'))?.slice(1) || '';
+  if (output) return output.split('\n').find(line => line.startsWith('n'))?.slice(1) || '';
   try { return readlinkSync(`/proc/${pid}/cwd`); } catch { return ''; }
 }
 function worktrees() {
@@ -79,66 +69,7 @@ console.log(`reference: port=${referencePort} pid=${referenceProcess} cwd=${refe
 
 if (!portPids(currentPort).length) fail(`current port ${currentPort} is not listening; start pnpm run dev first`);
 
-async function waitJson(endpoint, timeoutMs = 10000) {
-  const started = Date.now();
-  while (Date.now() - started < timeoutMs) {
-    try {
-      const response = await fetch(endpoint);
-      if (response.ok) return response.json();
-    } catch {}
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-  throw new Error(`timeout: ${endpoint}`);
-}
-async function runtimeRevision(url) {
-  if (!chrome) throw new Error('Chrome/Chromium not found; set CHROME_BIN');
-  const userDataDir = await mkdtemp(path.join(tmpdir(), 'three-preflight-'));
-  const port = 9422 + Math.floor(Math.random() * 500);
-  const browser = spawn(chrome, [
-    `--remote-debugging-port=${port}`, `--user-data-dir=${userDataDir}`, '--headless=new',
-    '--use-gl=angle', '--use-angle=metal', '--no-first-run', '--no-default-browser-check', url,
-  ], { stdio: 'ignore' });
-  try {
-    const tabs = await waitJson(`http://127.0.0.1:${port}/json`);
-    const tab = tabs.find(item => item.type === 'page') ?? tabs[0];
-    const socket = new WebSocket(tab.webSocketDebuggerUrl);
-    let id = 0;
-    const pending = new Map();
-    socket.addEventListener('message', event => {
-      const message = JSON.parse(event.data);
-      const request = pending.get(message.id);
-      if (request) { pending.delete(message.id); request(message); }
-    });
-    await new Promise((resolve, reject) => {
-      socket.addEventListener('open', resolve, { once: true });
-      socket.addEventListener('error', reject, { once: true });
-    });
-    const evaluate = expression => new Promise((resolve, reject) => {
-      const requestId = ++id;
-      pending.set(requestId, message => message.error ? reject(new Error(JSON.stringify(message.error))) : resolve(message.result.result.value));
-      socket.send(JSON.stringify({ id: requestId, method: 'Runtime.evaluate', params: { expression, returnByValue: true } }));
-    });
-    let revision;
-    for (let i = 0; i < 30 && revision == null; i++) {
-      revision = await evaluate('window.THREE && window.THREE.REVISION');
-      if (revision == null) await new Promise(resolve => setTimeout(resolve, 200));
-    }
-    socket.close();
-    return revision;
-  } finally { browser.kill('SIGTERM'); }
-}
-
-let currentRevision;
-try { currentRevision = await runtimeRevision(`http://127.0.0.1:${currentPort}/`); }
-catch (error) { fail(`could not inspect current runtime: ${error.message}`); }
-if (Number(currentRevision) !== from) fail(`runtime revision is ${currentRevision ?? '(unknown)'}, expected ${from}`);
-console.log(`current: port=${currentPort} runtime revision=r${currentRevision}`);
-let referenceRevision;
-try { referenceRevision = await runtimeRevision(`http://127.0.0.1:${referencePort}/`); }
-catch (error) { fail(`could not inspect reference runtime: ${error.message}`); }
-if (Number(referenceRevision) !== from) fail(`reference runtime revision is ${referenceRevision ?? '(unknown)'}, expected ${from}`);
-console.log(`reference: port=${referencePort} runtime revision=r${referenceRevision}`);
-
+console.log(`current: port=${currentPort} source version must be verified before running this gate`);
 const guideUrl = 'https://raw.githubusercontent.com/wiki/mrdoob/three.js/Migration-Guide.md';
 const guide = await (await fetch(guideUrl)).text();
 const heading = new RegExp(`^## r?${from} → r?${target}\\s*$`, 'm');

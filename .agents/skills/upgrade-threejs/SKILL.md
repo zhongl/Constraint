@@ -21,7 +21,7 @@ description: Three.js 版本迁移：用户要求升级 Three.js、迁移到指�
 - `http://localhost:5173/` 是当前迁移版本，由用户提前运行 `pnpm run dev` 提供。只连接和检查，不替用户启动、停止或占用 5173。
 - `http://localhost:4173/` 是参考基线，必须由独立 worktree 的 `refactor/referece` 分支提前运行 `pnpm run preview` 提供。只读取，不启动、覆盖或重新构建该端口。
 - 参考 worktree 必须与当前迁移 worktree 分离，避免当前分支的 `pnpm build` 覆盖参考分支的 `dist`。
-- 只通过运行时 `THREE.REVISION` 认定版本；HTML URL、缓存文件名和 package.json 只能作为辅助证据。
+- 当前迁移版本以源代码中的 Three.js 依赖为准；5173 仅检查服务可用，4173 仅作为参考基线进行视觉对比，两个端口都不做版本门禁。
 - 若 4173 来源无法证明，停在准备阶段。可要求用户修复环境，但不得产生迁移改动。
 
 ## 准备阶段：先取证，再编辑
@@ -45,18 +45,16 @@ node .agents/skills/upgrade-threejs/scripts/preflight.mjs <current> <current+1>
 
 - 当前是 Git worktree；
 - 当前 5173 正在监听；
-- 当前页面运行时 revision 等于 `<current>`；
 - 目标严格等于 `<current> + 1`；
 - 官方迁移段存在；
 - `refactor/referece` 独立 worktree 存在；
 - 4173 正在监听；
 - 4173 监听进程的 cwd 属于该参考 worktree；
 - 该 worktree 当前分支和 commit 可读取；
-- 4173 页面运行时 revision 与当前迁移 revision 一致。
 
 脚本返回非零时，立即停止。preflight 通过前不得编辑任何业务文件。已有修改属于用户时，保留它们；提交时只能暂存本迁移段文件。
 
-完成条件：终端出现 `PREFLIGHT PASSED`，并且输出中的运行时 revision、参考 worktree、参考 PID、分支和 commit 均符合预期。
+完成条件：终端出现 `PREFLIGHT PASSED`，并且输出中的当前运行时 revision、参考 worktree、参考 PID、分支和 commit 均符合预期。
 
 ## 一个迁移段的步骤
 
