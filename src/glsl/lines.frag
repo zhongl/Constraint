@@ -20,7 +20,7 @@ void main() {
 
     vec3 shadowMask = vec3( getShadowMask() );
 
-    outgoingLight = 0.05 + pow(shadowMask, vec3(1.5 - whiteRatio * 1.0)) * 0.95 + vBrightness * (1.0 - whiteRatio * 0.65);
+    outgoingLight = 0.1 + pow(shadowMask, vec3(1.5 - whiteRatio * 1.0)) * 0.9 + vBrightness * (1.0 - whiteRatio * 0.65);
 
     // chunk(fog_fragment);
 
