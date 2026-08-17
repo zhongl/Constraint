@@ -28,7 +28,7 @@ export function init() {
     // Preserve the r75 shadow camera; r76 derives far from light.distance.
     spot.shadow.update = function () {};
 
-    spot.shadow.bias = -0.0037;
+    spot.shadow.bias = -0.0034;
     spot.shadow.mapSize.set( 1024, 2048 );
 
     mesh.add( spot );
