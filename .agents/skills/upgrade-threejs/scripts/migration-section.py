@@ -10,12 +10,16 @@ if len(sys.argv) != 3:
 source, target = sys.argv[1:]
 url = 'https://raw.githubusercontent.com/wiki/mrdoob/three.js/Migration-Guide.md'
 text = urllib.request.urlopen(url, timeout=20).read().decode()
-heading = f'## r{source} → r{target}'
-start = text.find(heading)
-if start < 0:
-    print(f'No official migration section: r{source} → r{target}')
+
+heading = re.search(
+    rf'^## r?{re.escape(source)} → r?{re.escape(target)}\s*$',
+    text,
+    re.MULTILINE,
+)
+if heading is None:
+    print(f'No official migration section: {source} → {target}')
     raise SystemExit(2)
 
-match = re.search(r'\n## ', text[start + len(heading):])
-end = start + len(heading) + (match.start() if match else len(text))
-print(text[start:end].rstrip())
+next_heading = re.search(r'^## ', text[heading.end():], re.MULTILINE)
+end = heading.end() + (next_heading.start() if next_heading else len(text))
+print(text[heading.start():end].rstrip())
