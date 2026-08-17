@@ -23,7 +23,6 @@ void main() {
     outgoingLight *= 0.1 + pow(shadowMask, vec3(1.5)) * 0.9;
 
     // chunk(fog_fragment);
-    // chunk(linear_to_gamma_fragment);
 
 
     #ifdef USE_BILLBOARD

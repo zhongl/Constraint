@@ -46,7 +46,6 @@ export function init() {
     _material = new THREE.ShaderMaterial( {
         uniforms: THREE.UniformsUtils.merge( [
             THREE.UniformsLib.fog,
-            THREE.UniformsLib.ambient,
             THREE.UniformsLib.lights, {
             texturePosition: { type: 't', value: null },
             whiteNodesRatio: { type: 'f', value: 1 },
