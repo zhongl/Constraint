@@ -79,9 +79,9 @@ export function init() {
 
 export function update(dt) {
 
-    var positionRenderTarget = fbo.positionRenderTarget;
-    _material.uniforms.texturePosition.value = positionRenderTarget;
-    _depthMaterial.uniforms.texturePosition.value = positionRenderTarget;
+    var positionTexture = fbo.positionRenderTarget.texture;
+    _material.uniforms.texturePosition.value = positionTexture;
+    _depthMaterial.uniforms.texturePosition.value = positionTexture;
     _material.uniforms.whiteNodesRatio.value = settings.whiteNodesRatio;
     _material.uniforms.whiteRatio.value = settings.whiteRatio;
 

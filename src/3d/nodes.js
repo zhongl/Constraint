@@ -51,8 +51,8 @@ export function update(dt) {
 
     mesh.visible = settings.useWhiteNodes;
 
-    var positionRenderTarget = fbo.positionRenderTarget;
-    _material.uniforms.texturePosition.value = positionRenderTarget;
+    var positionTexture = fbo.positionRenderTarget.texture;
+    _material.uniforms.texturePosition.value = positionTexture;
     _material.uniforms.alpha.value = 1 - settings.whiteRatio * 0.9;
 
 }

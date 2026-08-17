@@ -100,7 +100,7 @@ export function init(renderer) {
     });
     _velocityRenderTarget2 = _velocityRenderTarget.clone();
     _copyTexture(_createVelocityTexture(), _velocityRenderTarget);
-    _copyTexture(_velocityRenderTarget, _velocityRenderTarget2);
+    _copyTexture(_velocityRenderTarget.texture, _velocityRenderTarget2);
 
     _positionRenderTarget = new THREE.WebGLRenderTarget(TEXTURE_SIZE, TEXTURE_SIZE, {
         wrapS: THREE.RepeatWrapping,
@@ -115,7 +115,7 @@ export function init(renderer) {
     _positionRenderTarget2 = _positionRenderTarget.clone();
 
     _copyTexture(_createPositionTexture(), _positionRenderTarget);
-    _copyTexture(_positionRenderTarget, _positionRenderTarget2);
+    _copyTexture(_positionRenderTarget.texture, _positionRenderTarget2);
 
 }
 
@@ -128,8 +128,8 @@ function _updateVelocity(dt) {
 
     _fboMesh.material = _velocityShader;
     _velocityShader.uniforms.time.value = _time;
-    _velocityShader.uniforms.textureVelocity.value = _velocityRenderTarget2;
-    _velocityShader.uniforms.texturePosition.value = _positionRenderTarget;
+    _velocityShader.uniforms.textureVelocity.value = _velocityRenderTarget2.texture;
+    _velocityShader.uniforms.texturePosition.value = _positionRenderTarget.texture;
     _renderer.render( _fboScene, _fboCamera, _velocityRenderTarget );
 }
 
@@ -142,8 +142,8 @@ function _updatePosition(dt) {
 
     _fboMesh.material = _positionShader;
     _positionShader.uniforms.time.value = _time;
-    _positionShader.uniforms.textureVelocity.value = _velocityRenderTarget;
-    _positionShader.uniforms.texturePosition.value = _positionRenderTarget2;
+    _positionShader.uniforms.textureVelocity.value = _velocityRenderTarget.texture;
+    _positionShader.uniforms.texturePosition.value = _positionRenderTarget2.texture;
     _renderer.render( _fboScene, _fboCamera, _positionRenderTarget );
 }
 
