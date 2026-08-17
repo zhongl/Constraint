@@ -25,10 +25,16 @@ export function init() {
     spot.shadow.camera.far = 2500;
     spot.shadow.camera.fov = 90;
     spot.shadow.camera.updateProjectionMatrix();
-    // Preserve the r75 shadow camera; r76 derives far from light.distance.
-    spot.shadow.update = function () {};
+    // Preserve the r75 shadow camera across the r108 shadow matrix update.
+    spot.shadow.updateMatrices = function (light, viewCamera, viewportIndex) {
+        this.camera.fov = 90;
+        this.camera.aspect = this.mapSize.width / this.mapSize.height;
+        this.camera.far = 2500;
+        this.camera.updateProjectionMatrix();
+        THREE.LightShadow.prototype.updateMatrices.call(this, light, viewCamera, viewportIndex);
+    };
 
-    spot.shadow.bias = -0.0032;
+    spot.shadow.bias = -0.003;
     spot.shadow.mapSize.set( 1024, 2048 );
 
     mesh.add( spot );
