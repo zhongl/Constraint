@@ -34,7 +34,7 @@ export function init() {
         THREE.LightShadow.prototype.updateMatrices.call(this, light, viewCamera, viewportIndex);
     };
 
-    spot.shadow.bias = -0.0032;
+    spot.shadow.bias = -0.0031;
     spot.shadow.mapSize.set( 1024, 2048 );
 
     mesh.add( spot );
