@@ -3,18 +3,18 @@ name: upgrade-threejs
 description: Three.js 版本迁移：用户要求升级 Three.js、迁移到指定或最新 revision，或继续未完成的版本迁移时调用；按官方 Migration Guide 逐个相邻 revision 执行并通过验证后独立提交。
 ---
 
-# Three.js 单段迁移
+# Three.js 连续迁移
 
 ## 核心契约
 
-使用四个 leading words 执行本 Skill：**单段、取证、门禁、提交点**。
+使用四个 leading words 执行本 Skill：**相邻段、取证、门禁、提交点**。
 
-- **单段**：一次执行只能完成 `current → current + 1`，不能把目标 revision 当成本次 revision。
+- **相邻段**：每次改动只处理 `current → current + 1` 的官方条目，不能把更远 revision 的条目混入当前 commit。
 - **取证**：关键判断必须有命令输出证明，不能仅凭端口可访问或 URL 文本推断。
 - **门禁**：preflight 或迁移后任一检查失败，停留在当前段，不编辑、不提交、不推进。
-- **提交点**：一个官方迁移段对应一个独立 Git commit。
+- **提交点**：一个官方迁移段对应一个独立 Git commit；完整门禁通过并提交后，无需用户确认，直接开始下一相邻段。
 
-例如当前运行时是 r122、目标是 r185，本次只能做 r122 → r123；提交成功后下一次才做 r123 → r124。
+例如当前运行时是 r122、目标是 r185，先完成并提交 r122 → r123；门禁通过后直接继续 r123 → r124，直至目标 revision。
 
 ## 运行约定
 
@@ -139,7 +139,7 @@ git commit -m "upgrade three r<current> to r<current+1>"
 
 不得使用 `git add -A`，不得提交用户已有修改、`PLAN.md` 或无关生成物。
 
-完成条件：commit 成功，且 `git status --short` 中没有本段未提交修改。提交后才可以读取下一官方段；一次执行不得跨越下一个提交点。
+完成条件：commit 成功，且 `git status --short` 中没有本段未提交修改。提交后读取下一官方段，并在其迁移后门禁全部通过时继续提交；持续至目标 revision，或在任一门禁失败时停留在当前段。
 
 ## 已验证的高风险模式
 
@@ -172,4 +172,4 @@ git commit -m "upgrade three r<current> to r<current+1>"
 - 独立 Git commit 已创建；
 - 当前工作区没有本段遗留修改。
 
-目标 revision 达成的标准是：从当前 revision 到目标 revision 的每个相邻段都重复上述流程并拥有独立 commit，而不是一次修改版本字符串。
+目标 revision 达成的标准是：从当前 revision 到目标 revision 的每个相邻段都重复上述流程、通过完整门禁并拥有独立 commit，而不是一次修改版本字符串。所有门禁和灰度容差通过的段在提交后自动推进，无需用户确认。
