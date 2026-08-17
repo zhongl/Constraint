@@ -59,6 +59,7 @@ function init() {
     _renderer = new THREE.WebGLRenderer({
         antialias : true
     });
+    _renderer.debug.checkShaderErrors = true;
     _renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     _renderer.shadowMap.enabled = true;
     document.body.appendChild(_renderer.domElement);
