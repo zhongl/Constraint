@@ -87,7 +87,7 @@ export function init(renderer) {
         depthTest: false
     });
 
-    _fboMesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), _copyShader );
+    _fboMesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), _copyShader );
     _fboScene.add( _fboMesh );
 
     _velocityRenderTarget = new THREE.WebGLRenderTarget( TEXTURE_SIZE, TEXTURE_SIZE, {

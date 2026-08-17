@@ -11,7 +11,7 @@ var _resolution;
 var _uTime;
 
 export function init() {
-    var geometry = new THREE.PlaneBufferGeometry( 2, 2);
+    var geometry = new THREE.PlaneGeometry( 2, 2);
     var material = new THREE.ShaderMaterial( {
         uniforms: {
             uAlpha : alphaUniform = {type : 'f', value: 1 },
