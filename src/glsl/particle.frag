@@ -3,7 +3,8 @@
 // chunk(packing);
 // chunk(fog_pars_fragment);
 // chunk(bsdfs);
-// chunk(lights_pars);
+// chunk(lights_pars_begin);
+// chunk(lights_pars_maps);
 // chunk(shadowmap_pars_fragment);
 // chunk(shadowmask_pars_fragment);
 
