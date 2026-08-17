@@ -1,6 +1,16 @@
 
 // chunk(common);
-// chunk(packing);
+// Match the legacy encoder used by the custom shadow material.
+const float UnpackDownscale = 255. / 256.;
+const vec4 UnpackFactors = UnpackDownscale / vec4( 256. * 256. * 256., 256. * 256., 256., 1. );
+
+float unpackRGBAToDepth( const in vec4 v ) {
+    return dot( v, UnpackFactors );
+}
+
+vec2 unpackRGBATo2Half( vec4 v ) {
+    return vec2( v.x + ( v.y / 255.0 ), v.z + ( v.w / 255.0 ) );
+}
 // chunk(fog_pars_fragment);
 // chunk(bsdfs);
 // chunk(lights_pars_begin);
