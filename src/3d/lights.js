@@ -19,6 +19,7 @@ export function init() {
     spot.position.z = 200;
     spot.target.position.set( 0, 0, 0 );
 
+    spot.decay = 1;
     spot.castShadow = true;
 
     spot.shadow.camera.near = 100;
