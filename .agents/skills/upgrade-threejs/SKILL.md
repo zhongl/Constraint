@@ -1,6 +1,6 @@
 ---
 name: upgrade-threejs
-description: 按 Three.js 官方 Migration Guide 逐迁移段升级旧项目；当用户要求升级 Three.js、从某个 revision 迁移到更高 revision、或继续 Three.js 版本迁移时使用。包含官方迁移项检索、项目 API 命中检查、WebGL/Shader 运行时门禁、5173 当前版本与 4173 参考版本的截图灰度对比、自动提交和异常停机规则。
+description: 按 Three.js 官方 Migration Guide 逐迁移段升级旧项目；当用户要求升级 Three.js、从某个 revision 迁移到更高 revision、或继续 Three.js 版本迁移时使用。包含官方迁移项检索、项目 API 命中检查、WebGL/Shader 运行时门禁、5173 当前版本与来自 `refactor/referece` 分支的 4173 参考版本截图灰度对比、自动提交和异常停机规则。
 ---
 
 # Three.js 逐段升级
@@ -11,9 +11,21 @@ description: 按 Three.js 官方 Migration Guide 逐迁移段升级旧项目；�
 
 默认运行约定：
 
-- `http://localhost:5173/`：当前开发版本，由用户运行 `pnpm run dev` 提供；只连接和检查，不替用户占用该端口。
-- `http://localhost:4173/`：预期视觉基线；只读取，不启动或覆盖该端口。
+- `http://localhost:5173/`：当前迁移版本，由用户运行 `pnpm run dev` 提供；只连接和检查，不替用户占用该端口。
+- `http://localhost:4173/`：参考基线，必须来自 `refactor/referece` 分支，并由该分支提前执行 `pnpm run preview` 提供；只读取，不启动或覆盖该端口。
+- 参考分支应在独立 worktree（或独立目录）中执行 `pnpm run preview`，避免当前分支的 `pnpm build` 覆盖参考分支的 `dist`。如果 4173 未运行或无法确认其来源，先停在准备阶段，不执行视觉结论。
 - Three.js 仍通过全局 CDN 加载时，优先只修改 `index.html` 的 CDN revision。
+
+## 准备参考基线
+
+迁移开始前，在独立 worktree 中确认并启动参考版本：
+
+```bash
+git switch refactor/referece
+pnpm run preview
+```
+
+保持该进程和 4173 端口不变，再回到当前迁移 worktree；当前迁移版本另行由用户执行 `pnpm run dev` 提供 5173。确认 `4173` 确实由 `refactor/referece` 的 `pnpm run preview` 启动后，才可进入迁移流程。
 
 ## 门禁
 
@@ -137,6 +149,6 @@ bridge three rX to rY
 - 当前段所需代码已修改；
 - `pnpm build` 通过；
 - runtime check 通过；
-- 当前截图与 4173 基线没有明显视觉异常；
+- 当前截图与由 `refactor/referece` 分支 `pnpm run preview` 提供的 4173 基线没有明显视觉异常；
 - 灰度门禁通过，或用户明确人工放行；
 - 已创建独立 Git 提交。
