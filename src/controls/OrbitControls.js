@@ -714,6 +714,4 @@ class OrbitControls extends THREE.EventDispatcher {
 
 }
 
-THREE.OrbitControls = OrbitControls;
-
 export default OrbitControls;
