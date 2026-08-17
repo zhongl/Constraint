@@ -5,6 +5,7 @@ uniform float whiteNodesRatio;
 
 varying float vBrightness;
 
+// chunk(fog_pars_vertex);
 // chunk(shadowmap_pars_vertex);
 
 void main() {
@@ -19,6 +20,7 @@ void main() {
     vec4 mvPosition = viewMatrix * worldPosition;
     vBrightness = brightness * whiteNodesRatio;
 
+    // chunk(fog_vertex);
     // chunk(shadowmap_vertex);
 
     gl_Position = projectionMatrix * mvPosition;

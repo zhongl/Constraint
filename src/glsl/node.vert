@@ -5,6 +5,7 @@ uniform float alpha;
 
 varying float vAlpha;
 
+// chunk(fog_pars_vertex);
 // chunk(shadowmap_pars_vertex);
 #pragma glslify: random = require(glsl-random)
 
@@ -15,6 +16,7 @@ void main() {
     vec4 worldPosition = modelMatrix * vec4( pos, 1.0 );
     vec4 mvPosition = viewMatrix * worldPosition;
 
+    // chunk(fog_vertex);
     // chunk(shadowmap_vertex);
 
     float size = 3.0 + position.z * 80.0;

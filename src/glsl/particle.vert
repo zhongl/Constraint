@@ -12,6 +12,7 @@ uniform sampler2D texturePosition;
 
 #endif
 
+// chunk(fog_pars_vertex);
 // chunk(shadowmap_pars_vertex);
 
 void main() {
@@ -33,6 +34,7 @@ void main() {
 
     #endif
 
+    // chunk(fog_vertex);
     // chunk(shadowmap_vertex);
 
 
