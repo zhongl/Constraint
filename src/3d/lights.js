@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 export var mesh;
-export var spot;
+var spot;
 
 export function init() {
 
