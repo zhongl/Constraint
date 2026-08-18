@@ -26,6 +26,8 @@ export class Fbo {
     private _fboScene!: THREE.Scene;
     private _fboCamera!: THREE.Camera;
     private _time = 0;
+    private _velocityTexture!: THREE.DataTexture;
+    private _positionTexture!: THREE.DataTexture;
 
     constructor(settings: ConstraintSettings) {
         this._settings = settings;
@@ -94,12 +96,14 @@ export class Fbo {
 
         this._velocityRenderTarget = this._createRenderTarget();
         this._velocityRenderTarget2 = this._velocityRenderTarget.clone();
-        this._copyTexture(this._createVelocityTexture(), this._velocityRenderTarget);
+        this._velocityTexture = this._createVelocityTexture();
+        this._copyTexture(this._velocityTexture, this._velocityRenderTarget);
         this._copyTexture(this._velocityRenderTarget.texture, this._velocityRenderTarget2);
 
         this._positionRenderTarget = this._createRenderTarget();
         this._positionRenderTarget2 = this._positionRenderTarget.clone();
-        this._copyTexture(this._createPositionTexture(), this._positionRenderTarget);
+        this._positionTexture = this._createPositionTexture();
+        this._copyTexture(this._positionTexture, this._positionRenderTarget);
         this._copyTexture(this._positionRenderTarget.texture, this._positionRenderTarget2);
 
         return true;
@@ -121,6 +125,19 @@ export class Fbo {
 
         this.positionRenderTarget = this._positionRenderTarget;
         this.prevPositionRenderTarget = this._positionRenderTarget2;
+    }
+
+    dispose() {
+        this._velocityTexture.dispose();
+        this._positionTexture.dispose();
+        this._velocityRenderTarget.dispose();
+        this._velocityRenderTarget2.dispose();
+        this._positionRenderTarget.dispose();
+        this._positionRenderTarget2.dispose();
+        this._copyShader.dispose();
+        this._velocityShader.dispose();
+        this._positionShader.dispose();
+        this._fboMesh.geometry.dispose();
     }
 
     private _createRenderTarget() {

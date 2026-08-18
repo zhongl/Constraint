@@ -50,6 +50,11 @@ export class ConstraintNodes {
         this.mesh = new THREE.Points(geometry, this._material);
     }
 
+    dispose() {
+        this.mesh.geometry.dispose();
+        this._material.dispose();
+    }
+
     update() {
         this.mesh.visible = this._settings.useWhiteNodes;
         this._material.uniforms.texturePosition.value = this._fbo.positionRenderTarget.texture;

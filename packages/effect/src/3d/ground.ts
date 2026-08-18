@@ -29,6 +29,11 @@ export class ConstraintGround {
         this.mesh.receiveShadow = true;
     }
 
+    dispose() {
+        this.mesh.geometry.dispose();
+        this._material.dispose();
+    }
+
     update() {
         this.mesh.visible = true;
         this._material.color.copy(BLACK).lerp(WHITE, this._settings.whiteRatio);

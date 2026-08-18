@@ -40,5 +40,7 @@ export class ConstraintLights {
         this.mesh.add(spot);
     }
 
+    dispose() {}
+
     update() {}
 }

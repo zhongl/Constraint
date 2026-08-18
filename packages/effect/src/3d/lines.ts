@@ -81,6 +81,12 @@ export class ConstraintLines {
         this.mesh.customDepthMaterial = this._depthMaterial;
     }
 
+    dispose() {
+        this.mesh.geometry.dispose();
+        this._material.dispose();
+        this._depthMaterial.dispose();
+    }
+
     update() {
         var positionTexture = this._fbo.positionRenderTarget.texture;
         this._material.uniforms.texturePosition.value = positionTexture;

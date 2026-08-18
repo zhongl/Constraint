@@ -20,6 +20,7 @@ export class ConstraintEffect {
     private _ground!: ConstraintGround;
     private _lights!: ConstraintLights;
     private readonly _skybox: THREE.Mesh;
+    private _originalRenderBufferDirect!: THREE.WebGLRenderer['renderBufferDirect'];
 
     constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
         this._renderer = renderer;
@@ -65,6 +66,7 @@ export class ConstraintEffect {
 
         var settings = this._settings;
         var fn = this._renderer.renderBufferDirect;
+        this._originalRenderBufferDirect = fn;
         this._renderer.renderBufferDirect = function(camera, scene, geometry, material, object, group) {
             if (material !== settings.ignoredMaterial) {
                 fn.call(this, camera, scene, geometry, material, object, group);
@@ -101,6 +103,19 @@ export class ConstraintEffect {
 
     setPointer(position: THREE.Vector3) {
         this._settings.mouse3d.copy(position);
+    }
+
+    dispose() {
+        this._scene.remove(this._lights.mesh, this._lines.mesh, this._nodes.mesh, this._ground.mesh, this._skybox);
+        this._lights.dispose();
+        this._lines.dispose();
+        this._nodes.dispose();
+        this._ground.dispose();
+        this._fbo.dispose();
+        this._skybox.geometry.dispose();
+        (this._skybox.material as THREE.Material).dispose();
+        this._settings.ignoredMaterial.dispose();
+        this._renderer.renderBufferDirect = this._originalRenderBufferDirect;
     }
 
     update(dt: number, camera: THREE.PerspectiveCamera) {
