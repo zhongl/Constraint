@@ -15,10 +15,10 @@ export class ConstraintEffect {
     private readonly _fog = new THREE.FogExp2(0x222222, 0.001);
     private readonly _settings = createSettings();
     private readonly _fbo = new Fbo(this._settings);
-    private _lines!: ConstraintLines;
-    private _nodes!: ConstraintNodes;
-    private _ground!: ConstraintGround;
-    private _lights!: ConstraintLights;
+    private readonly _lines: ConstraintLines;
+    private readonly _nodes: ConstraintNodes;
+    private readonly _ground: ConstraintGround;
+    private readonly _lights: ConstraintLights;
     private readonly _skybox: THREE.Mesh;
     private _originalRenderBufferDirect!: THREE.WebGLRenderer['renderBufferDirect'];
 
@@ -26,6 +26,10 @@ export class ConstraintEffect {
         this._renderer = renderer;
         this._scene = scene;
         this._skybox = new THREE.Mesh(new THREE.IcosahedronGeometry(128, 2));
+        this._lights = new ConstraintLights();
+        this._lines = new ConstraintLines(this._settings, this._fbo);
+        this._nodes = new ConstraintNodes(this._settings, this._fbo);
+        this._ground = new ConstraintGround(this._settings);
     }
 
     get constraintRatio(): number {
@@ -77,19 +81,15 @@ export class ConstraintEffect {
 
         if (!this._fbo.init(this._renderer)) return false;
 
-        this._lights = new ConstraintLights();
         this._lights.init();
         this._scene.add(this._lights.mesh);
 
-        this._lines = new ConstraintLines(this._settings, this._fbo);
         this._lines.init();
         this._scene.add(this._lines.mesh);
 
-        this._nodes = new ConstraintNodes(this._settings, this._fbo);
         this._nodes.init();
         this._scene.add(this._nodes.mesh);
 
-        this._ground = new ConstraintGround(this._settings);
         this._ground.init();
         this._scene.add(this._ground.mesh);
 
