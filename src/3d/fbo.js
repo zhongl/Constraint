@@ -32,14 +32,15 @@ export function init(renderer) {
 
     var gl = _renderer.getContext();
     if ( !gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) ) {
-        alert( 'No support for vertex shader textures!' );
-        return;
+        return false;
     }
     var isWebGL2 = typeof WebGL2RenderingContext !== 'undefined' &&
         gl instanceof WebGL2RenderingContext;
     if ( !isWebGL2 && !gl.getExtension( 'OES_texture_float' )) {
-        alert( 'No OES_texture_float support for float textures!' );
-        return;
+        return false;
+    }
+    if ( !gl.getExtension(isWebGL2 ? 'EXT_color_buffer_float' : 'WEBGL_color_buffer_float') ) {
+        return false;
     }
 
     _fboScene = new THREE.Scene();
@@ -119,6 +120,7 @@ export function init(renderer) {
     _copyTexture(_createPositionTexture(), _positionRenderTarget);
     _copyTexture(_positionRenderTarget.texture, _positionRenderTarget2);
 
+    return true;
 }
 
 function _updateVelocity() {

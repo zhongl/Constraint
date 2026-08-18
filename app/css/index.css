@@ -17,4 +17,19 @@ body {
     box-sizing: border-box;
 }
 
+.compatibility-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(90%, 32rem);
+    padding: 2rem;
+    color: #eee;
+    text-align: center;
+    transform: translate(-50%, -50%);
+}
+
+.compatibility-message h1 {
+    margin-top: 0;
+}
+
 

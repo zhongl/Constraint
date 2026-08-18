@@ -36,9 +36,14 @@ function init() {
     settings.mouse = new THREE.Vector2();
     settings.mouse3d = _ray.origin;
 
-    _renderer = new THREE.WebGLRenderer({
-        antialias : true
-    });
+    try {
+        _renderer = new THREE.WebGLRenderer({
+            antialias : true
+        });
+    } catch {
+        _showCompatibilityMessage();
+        return;
+    }
     _renderer.debug.checkShaderErrors = true;
     _renderer._useLegacyLights = true;
     _renderer.shadowMap.type = THREE.PCFShadowMap;
@@ -69,7 +74,12 @@ function init() {
     _control.noPan = true;
     _control.update();
 
-    fbo.init(_renderer);
+    if (!fbo.init(_renderer)) {
+        _renderer.dispose();
+        _renderer.domElement.remove();
+        _showCompatibilityMessage();
+        return;
+    }
 
     lights.init();
     _scene.add(lights.mesh);
@@ -121,6 +131,10 @@ function init() {
     _onResize();
     _loop();
 
+}
+
+function _showCompatibilityMessage() {
+    document.body.innerHTML = '<main class="compatibility-message"><h1>无法运行此实验</h1><p>你的设备或浏览器不支持运行所需的 WebGL 浮点纹理能力。</p><p>请尝试使用最新版 Chrome、Safari 或 Firefox，并开启硬件加速。</p></main>';
 }
 
 function _onKeyUp(evt) {
