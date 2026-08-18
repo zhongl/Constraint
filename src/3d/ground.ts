@@ -1,34 +1,36 @@
-import type { ConstraintSettings } from '../core/settings';
 import * as THREE from 'three';
-
-export var mesh: THREE.Mesh;
-
-var _geometry: THREE.PlaneGeometry;
-var _material: THREE.MeshPhongMaterial;
-var _settings: ConstraintSettings;
+import type { ConstraintSettings } from '../core/settings';
 
 var BLACK = new THREE.Color(0x111111);
 var WHITE = new THREE.Color(0xcccccc);
 
-export function init(_renderer: THREE.WebGLRenderer, settings: ConstraintSettings) {
-    _settings = settings;
-    _geometry = new THREE.PlaneGeometry( 4000, 4000, 10, 10 );
-    _material = new THREE.MeshPhongMaterial( {
-        color: new THREE.Color(),
-        transparent: true,
-        shininess: 5
-    });
+export class ConstraintGround {
+    mesh!: THREE.Mesh;
 
+    private readonly _settings: ConstraintSettings;
+    private _material!: THREE.MeshPhongMaterial;
 
-    mesh = new THREE.Mesh( _geometry, _material );
-    mesh.position.y = -200;
-    mesh.rotation.x = -1.57;
-    mesh.castShadow = false;
-    mesh.receiveShadow = true;
+    constructor(settings: ConstraintSettings) {
+        this._settings = settings;
+    }
 
-}
+    init() {
+        var geometry = new THREE.PlaneGeometry(4000, 4000, 10, 10);
+        this._material = new THREE.MeshPhongMaterial({
+            color: new THREE.Color(),
+            transparent: true,
+            shininess: 5
+        });
 
-export function update() {
-    mesh.visible = true;
-    _material.color.copy(BLACK).lerp(WHITE, _settings.whiteRatio);
+        this.mesh = new THREE.Mesh(geometry, this._material);
+        this.mesh.position.y = -200;
+        this.mesh.rotation.x = -1.57;
+        this.mesh.castShadow = false;
+        this.mesh.receiveShadow = true;
+    }
+
+    update() {
+        this.mesh.visible = true;
+        this._material.color.copy(BLACK).lerp(WHITE, this._settings.whiteRatio);
+    }
 }
