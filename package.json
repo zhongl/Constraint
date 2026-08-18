@@ -9,7 +9,7 @@
     "glsl-noise": "^0.0.0",
     "glsl-random": "^0.0.5",
     "lil-gui": "^0.21.0",
-    "three": "0.185.0"
+    "three": "0.185.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

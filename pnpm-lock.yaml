@@ -18,8 +18,8 @@ importers:
         specifier: ^0.21.0
         version: 0.21.0
       three:
-        specifier: 0.185.0
-        version: 0.185.0
+        specifier: 0.185.1
+        version: 0.185.1
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -864,8 +864,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  three@0.185.0:
-    resolution: {integrity: sha512-+yRrcRO2iZa8uzvNNl0d7cL4huhgKgBvVJ0njcTe8xFqZ6DMAFZdCKDP91SEAuj25bNAj7k1QQdf+srZywVK6w==}
+  three@0.185.1:
+    resolution: {integrity: sha512-5aojFCXKwnjBRZvUnt3WFfEcvUJgkN5LlijRFN95hMy8WVkG4I0QNcJE+OuWvuJ0bOdStrbfXn0pkd6/QyiAlg==}
 
   through2@0.6.5:
     resolution: {integrity: sha512-RkK/CCESdTKQZHdmKICijdKKsCRVHs5KsLZ6pACAmF/1GPUQhonHSXWNERctxEp7RmvjdNbZTL5z9V7nSCXKcg==}
@@ -1670,7 +1670,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  three@0.185.0: {}
+  three@0.185.1: {}
 
   through2@0.6.5:
     dependencies:

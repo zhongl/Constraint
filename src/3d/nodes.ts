@@ -7,10 +7,10 @@ import nodeFrag from '../glsl/node.frag';
 import * as fbo from './fbo';
 import * as math from '../utils/math';
 
-export var mesh;
+export var mesh: THREE.Points;
 
-var _geometry;
-var _material;
+var _geometry: THREE.BufferGeometry;
+var _material: THREE.ShaderMaterial;
 
 export function init() {
 
@@ -30,11 +30,11 @@ export function init() {
     _geometry = new THREE.BufferGeometry();
     _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
     _material = new THREE.ShaderMaterial( {
-        uniforms: (THREE.UniformsUtils.merge as any)( [
+        uniforms: THREE.UniformsUtils.merge( [
             THREE.UniformsLib.fog, {
-            texturePosition: { type: 't', value: null },
-            alpha: { type: 'f', value: 1 }
-        }]) as any,
+            texturePosition: { value: null },
+            alpha: { value: 1 }
+        }]),
         vertexShader: shaderParse(nodeVert),
         fragmentShader: shaderParse(nodeFrag),
         blending: THREE.AdditiveBlending,

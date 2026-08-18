@@ -1,10 +1,10 @@
 import settings from '../core/settings';
 import * as THREE from 'three';
 
-export var mesh;
+export var mesh: THREE.Mesh;
 
-var _geometry;
-var _material;
+var _geometry: THREE.PlaneGeometry;
+var _material: THREE.MeshPhongMaterial;
 
 var BLACK = new THREE.Color(0x111111);
 var WHITE = new THREE.Color(0xcccccc);

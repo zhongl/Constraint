@@ -1,4 +1,4 @@
-import type * as THREE from 'three';
+import * as THREE from 'three';
 
 interface Settings {
     textureSize: number;
@@ -9,9 +9,9 @@ interface Settings {
     whiteNodesRatio: number;
     isWhite: boolean;
     whiteRatio: number;
-    mouse?: THREE.Vector2;
-    mouse3d?: THREE.Vector3;
-    ignoredMaterial?: THREE.Material;
+    mouse: THREE.Vector2;
+    mouse3d: THREE.Vector3;
+    ignoredMaterial: THREE.Material;
 }
 
 const settings: Settings = {
@@ -25,7 +25,10 @@ const settings: Settings = {
     whiteNodesRatio: 1,
 
     isWhite: false,
-    whiteRatio: 0
+    whiteRatio: 0,
+    mouse: new THREE.Vector2(),
+    mouse3d: new THREE.Vector3(),
+    ignoredMaterial: new THREE.Material()
 };
 
 export default settings;

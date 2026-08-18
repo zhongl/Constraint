@@ -9,11 +9,11 @@ import lineDepthFrag from '../glsl/lineDepth.frag';
 import * as fbo from './fbo';
 import * as math from '../utils/math';
 
-export var mesh;
+export var mesh: THREE.LineSegments;
 
-var _geometry;
-var _material;
-var _depthMaterial;
+var _geometry: THREE.BufferGeometry;
+var _material: THREE.ShaderMaterial;
+var _depthMaterial: THREE.ShaderMaterial;
 
 export function init() {
 
@@ -44,13 +44,13 @@ export function init() {
     _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
     _geometry.setAttribute( 'oppositeUv', new THREE.BufferAttribute( oppositeUv, 2 ));
     _material = new THREE.ShaderMaterial( {
-        uniforms: (THREE.UniformsUtils.merge as any)( [
+        uniforms: THREE.UniformsUtils.merge( [
             THREE.UniformsLib.fog,
             THREE.UniformsLib.lights, {
-            texturePosition: { type: 't', value: null },
-            whiteNodesRatio: { type: 'f', value: 1 },
-            whiteRatio: { type: 'f', value: 1 }
-        }]) as any,
+            texturePosition: { value: null },
+            whiteNodesRatio: { value: 1 },
+            whiteRatio: { value: 1 }
+        }]),
         vertexShader: shaderParse(linesVert),
         fragmentShader: shaderParse(linesFrag),
         linewidth: 1,
@@ -61,8 +61,8 @@ export function init() {
 
     _depthMaterial = new THREE.ShaderMaterial( {
         uniforms: {
-            texturePosition: { type: 't', value: null },
-        } as any,
+            texturePosition: { value: null },
+        },
         vertexShader: shaderParse(lineDepthVert),
         fragmentShader: shaderParse(lineDepthFrag),
         depthTest: true,
