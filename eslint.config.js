@@ -2,7 +2,7 @@ import eslint from "@eslint/js";
 
 export default [
   {
-    ignores: ["dist/**", ".agents/**", "node_modules/**"],
+    ignores: ["dist/**", "**/dist/**", ".agents/**", "node_modules/**"],
   },
   eslint.configs.recommended,
   {

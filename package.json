@@ -6,8 +6,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "glsl-noise": "^0.0.0",
-    "glsl-random": "^0.0.5",
+    "@constraint/effect": "workspace:*",
     "lil-gui": "^0.21.0",
     "three": "0.185.1"
   },
@@ -15,15 +14,16 @@
     "@eslint/js": "^10.0.1",
     "@types/three": "^0.185.4",
     "eslint": "^10.8.1",
-    "glslify": "^7.1.1",
     "typescript": "^7.0.2",
     "vite": "^8.2.1"
   },
   "scripts": {
+    "predev": "pnpm --filter @constraint/effect build",
     "dev": "vite",
+    "dev:effect": "pnpm --filter @constraint/effect watch",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "build": "vite build",
+    "typecheck": "pnpm --filter @constraint/effect typecheck && tsc --noEmit",
+    "build": "pnpm --filter @constraint/effect build && vite build",
     "check": "pnpm lint && pnpm build",
     "preview": "pnpm build && vite preview"
   },
