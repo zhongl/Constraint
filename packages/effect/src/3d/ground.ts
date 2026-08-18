@@ -14,7 +14,7 @@ export class ConstraintGround {
         this._settings = settings;
     }
 
-    init() {
+    init(): void {
         const geometry = new THREE.PlaneGeometry(4000, 4000, 10, 10);
         this._material = new THREE.MeshPhongMaterial({
             color: new THREE.Color(),
@@ -29,12 +29,12 @@ export class ConstraintGround {
         this.mesh.receiveShadow = true;
     }
 
-    dispose() {
+    dispose(): void {
         this.mesh.geometry.dispose();
         this._material.dispose();
     }
 
-    update() {
+    update(): void {
         this.mesh.visible = true;
         this._material.color.copy(BLACK).lerp(WHITE, this._settings.whiteRatio);
     }

@@ -28,7 +28,7 @@ export class ConstraintEffect {
         this._skybox = new THREE.Mesh(new THREE.IcosahedronGeometry(128, 2));
     }
 
-    get constraintRatio() {
+    get constraintRatio(): number {
         return this._settings.constraintRatio;
     }
 
@@ -36,7 +36,7 @@ export class ConstraintEffect {
         this._settings.constraintRatio = value;
     }
 
-    get followPointer() {
+    get followPointer(): boolean {
         return this._settings.followMouse;
     }
 
@@ -44,7 +44,7 @@ export class ConstraintEffect {
         this._settings.followMouse = value;
     }
 
-    get useWhiteNodes() {
+    get useWhiteNodes(): boolean {
         return this._settings.useWhiteNodes;
     }
 
@@ -52,7 +52,7 @@ export class ConstraintEffect {
         this._settings.useWhiteNodes = value;
     }
 
-    get isWhite() {
+    get isWhite(): boolean {
         return this._settings.isWhite;
     }
 
@@ -60,7 +60,7 @@ export class ConstraintEffect {
         this._settings.isWhite = value;
     }
 
-    init() {
+    init(): boolean {
         this._settings.mouse3d = new THREE.Vector3();
         this._settings.ignoredMaterial = new THREE.Material();
 
@@ -101,11 +101,11 @@ export class ConstraintEffect {
         return true;
     }
 
-    setPointer(position: THREE.Vector3) {
+    setPointer(position: THREE.Vector3): void {
         this._settings.mouse3d.copy(position);
     }
 
-    dispose() {
+    dispose(): void {
         this._scene.remove(this._lights.mesh, this._lines.mesh, this._nodes.mesh, this._ground.mesh, this._skybox);
         this._lights.dispose();
         this._lines.dispose();
@@ -118,7 +118,7 @@ export class ConstraintEffect {
         this._renderer.renderBufferDirect = this._originalRenderBufferDirect;
     }
 
-    update(dt: number, camera: THREE.PerspectiveCamera) {
+    update(dt: number, camera: THREE.PerspectiveCamera): void {
         this._settings.whiteRatio += ((this._settings.isWhite ? 1 : 0) - this._settings.whiteRatio) * 0.2;
         this._settings.whiteNodesRatio += ((this._settings.useWhiteNodes ? 1 : 0) - this._settings.whiteNodesRatio) * 0.1;
 

@@ -35,7 +35,7 @@ export class Fbo {
         this.amount = this.textureSize * this.textureSize;
     }
 
-    init(renderer: THREE.WebGLRenderer) {
+    init(renderer: THREE.WebGLRenderer): boolean {
         this._renderer = renderer;
 
         const gl = this._renderer.getContext();
@@ -109,7 +109,7 @@ export class Fbo {
         return true;
     }
 
-    update(dt: number) {
+    update(dt: number): void {
         this._time += dt;
 
         const mouse3dUniformValue = this._velocityShader.uniforms.mouse3d!.value;
@@ -127,7 +127,7 @@ export class Fbo {
         this.prevPositionRenderTarget = this._positionRenderTarget2;
     }
 
-    dispose() {
+    dispose(): void {
         this._velocityTexture.dispose();
         this._positionTexture.dispose();
         this._velocityRenderTarget.dispose();
@@ -140,7 +140,7 @@ export class Fbo {
         this._fboMesh.geometry.dispose();
     }
 
-    private _createRenderTarget() {
+    private _createRenderTarget(): THREE.WebGLRenderTarget {
         return new THREE.WebGLRenderTarget(this.textureSize, this.textureSize, {
             wrapS: THREE.RepeatWrapping,
             wrapT: THREE.RepeatWrapping,
@@ -153,7 +153,7 @@ export class Fbo {
         });
     }
 
-    private _updateVelocity() {
+    private _updateVelocity(): void {
         const tmp = this._velocityRenderTarget;
         this._velocityRenderTarget = this._velocityRenderTarget2;
         this._velocityRenderTarget2 = tmp;
@@ -167,7 +167,7 @@ export class Fbo {
         this._renderer.setRenderTarget(null);
     }
 
-    private _updatePosition() {
+    private _updatePosition(): void {
         const tmp = this._positionRenderTarget;
         this._positionRenderTarget = this._positionRenderTarget2;
         this._positionRenderTarget2 = tmp;
@@ -181,7 +181,7 @@ export class Fbo {
         this._renderer.setRenderTarget(null);
     }
 
-    private _copyTexture(input: THREE.Texture, output: THREE.WebGLRenderTarget) {
+    private _copyTexture(input: THREE.Texture, output: THREE.WebGLRenderTarget): void {
         this._fboMesh.material = this._copyShader;
         this._copyShader.uniforms.inputTexture!.value = input;
         this._renderer.setRenderTarget(output);
@@ -189,7 +189,7 @@ export class Fbo {
         this._renderer.setRenderTarget(null);
     }
 
-    private _createVelocityTexture() {
+    private _createVelocityTexture(): THREE.DataTexture {
         const a = new Float32Array(this.amount * 4);
         for (let i = 0, len = a.length; i < len; i += 4) {
             a[i] = 0;
@@ -206,7 +206,7 @@ export class Fbo {
         return texture;
     }
 
-    private _createPositionTexture() {
+    private _createPositionTexture(): THREE.DataTexture {
         const a = new Float32Array(this.amount * 4);
         for (let i = 0, len = a.length; i < len; i += 4) {
             a[i] = (Math.random() - 0.5) * 1;

@@ -21,7 +21,7 @@ export class ConstraintLines {
         this._fbo = fbo;
     }
 
-    init() {
+    init(): void {
         const particleAmount = this._fbo.amount;
         const textureSize = this._fbo.textureSize;
         const lineAmount = this._settings.lineAmount;
@@ -81,13 +81,13 @@ export class ConstraintLines {
         this.mesh.customDepthMaterial = this._depthMaterial;
     }
 
-    dispose() {
+    dispose(): void {
         this.mesh.geometry.dispose();
         this._material.dispose();
         this._depthMaterial.dispose();
     }
 
-    update() {
+    update(): void {
         const positionTexture = this._fbo.positionRenderTarget.texture;
         this._material.uniforms.texturePosition!.value = positionTexture;
         this._depthMaterial.uniforms.texturePosition!.value = positionTexture;

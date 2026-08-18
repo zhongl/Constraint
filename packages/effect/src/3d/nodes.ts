@@ -18,7 +18,7 @@ export class ConstraintNodes {
         this._fbo = fbo;
     }
 
-    init() {
+    init(): void {
         const particleAmount = this._fbo.amount;
         const textureSize = this._fbo.textureSize;
         const positions = new Float32Array(particleAmount * 3);
@@ -50,12 +50,12 @@ export class ConstraintNodes {
         this.mesh = new THREE.Points(geometry, this._material);
     }
 
-    dispose() {
+    dispose(): void {
         this.mesh.geometry.dispose();
         this._material.dispose();
     }
 
-    update() {
+    update(): void {
         this.mesh.visible = this._settings.useWhiteNodes;
         this._material.uniforms.texturePosition!.value = this._fbo.positionRenderTarget.texture;
         this._material.uniforms.alpha!.value = 1 - this._settings.whiteRatio * 0.9;

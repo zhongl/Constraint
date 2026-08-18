@@ -3,7 +3,7 @@ import * as THREE from 'three';
 export class ConstraintLights {
     mesh!: THREE.Object3D;
 
-    init() {
+    init(): void {
         this.mesh = new THREE.Object3D();
 
         const ambient = new THREE.AmbientLight(0x999999, Math.PI);
@@ -40,7 +40,7 @@ export class ConstraintLights {
         this.mesh.add(spot);
     }
 
-    dispose() {}
+    dispose(): void {}
 
-    update() {}
+    update(): void {}
 }
