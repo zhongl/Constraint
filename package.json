@@ -23,8 +23,8 @@
   "scripts": {
     "dev": "vite",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
-    "build": "vite build",
+    "typecheck": "pnpm --filter @constraint/effect typecheck && tsc --noEmit",
+    "build": "pnpm --filter @constraint/effect build && vite build",
     "check": "pnpm lint && pnpm build",
     "preview": "pnpm build && vite preview"
   },

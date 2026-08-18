@@ -45,9 +45,28 @@ importers:
 
   packages/effect:
     dependencies:
+      glsl-noise:
+        specifier: ^0.0.0
+        version: 0.0.0
+      glsl-random:
+        specifier: ^0.0.5
+        version: 0.0.5
       three:
         specifier: 0.185.1
         version: 0.185.1
+    devDependencies:
+      '@types/three':
+        specifier: ^0.185.4
+        version: 0.185.4
+      glslify:
+        specifier: ^7.1.1
+        version: 7.1.1
+      typescript:
+        specifier: ^7.0.2
+        version: 7.0.2
+      vite:
+        specifier: ^8.2.1
+        version: 8.2.1
 
 packages:
 

@@ -4,9 +4,27 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "development": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "vite build && tsc --emitDeclarationOnly --declaration --declarationMap --outDir dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "glsl-noise": "^0.0.0",
+    "glsl-random": "^0.0.5"
   },
   "peerDependencies": {
     "three": "0.185.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.185.4",
+    "glslify": "^7.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.1"
   }
 }

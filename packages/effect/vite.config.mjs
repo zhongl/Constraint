@@ -1,0 +1,40 @@
+import path from 'node:path';
+import { defineConfig } from 'vite';
+import glslify from 'glslify';
+
+function bundleShader(file) {
+    return glslify.file(file, { basedir: path.dirname(file) });
+}
+
+function glslifyShader() {
+    return {
+        name: 'glslify-shader',
+        enforce: 'pre',
+        async load(id) {
+            var file = id.split('?')[0];
+            if(!/\.(glsl|frag|vert)$/.test(file)) return null;
+
+            var source = await bundleShader(file);
+            return {
+                code: 'export default ' + JSON.stringify(source) + ';',
+                map: null
+            };
+        }
+    };
+}
+
+export default defineConfig({
+    plugins: [
+        glslifyShader()
+    ],
+    build: {
+        lib: {
+            entry: 'src/index.ts',
+            formats: ['es'],
+            fileName: 'index'
+        },
+        rollupOptions: {
+            external: ['three']
+        }
+    }
+});
