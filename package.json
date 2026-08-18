@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/three": "^0.185.4",
     "eslint": "^10.8.1",
     "glslify": "^7.1.1",
     "typescript": "^7.0.2",
