@@ -7,10 +7,10 @@ import nodeFrag from '../glsl/node.frag';
 import * as fbo from './fbo';
 import * as math from '../utils/math';
 
-export var mesh;
+export var mesh: THREE.Points;
 
-var _geometry;
-var _material;
+var _geometry: THREE.BufferGeometry;
+var _material: THREE.ShaderMaterial;
 
 export function init() {
 
@@ -32,8 +32,8 @@ export function init() {
     _material = new THREE.ShaderMaterial( {
         uniforms: THREE.UniformsUtils.merge( [
             THREE.UniformsLib.fog, {
-            texturePosition: { type: 't', value: null },
-            alpha: { type: 'f', value: 1 }
+            texturePosition: { value: null },
+            alpha: { value: 1 }
         }]),
         vertexShader: shaderParse(nodeVert),
         fragmentShader: shaderParse(nodeFrag),
@@ -47,7 +47,7 @@ export function init() {
 
 }
 
-export function update() {
+export function update(_dt: number) {
 
     mesh.visible = settings.useWhiteNodes;
 

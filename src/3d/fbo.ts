@@ -6,27 +6,27 @@ import fboThroughFrag from '../glsl/fboThrough.frag';
 import velocityFrag from '../glsl/velocity.frag';
 import positionFrag from '../glsl/position.frag';
 
-var _copyShader;
-var _velocityShader;
-var _positionShader;
-var _velocityRenderTarget;
-var _velocityRenderTarget2;
-var _positionRenderTarget;
-var _positionRenderTarget2;
+var _copyShader: THREE.ShaderMaterial;
+var _velocityShader: THREE.ShaderMaterial;
+var _positionShader: THREE.ShaderMaterial;
+var _velocityRenderTarget: THREE.WebGLRenderTarget;
+var _velocityRenderTarget2: THREE.WebGLRenderTarget;
+var _positionRenderTarget: THREE.WebGLRenderTarget;
+var _positionRenderTarget2: THREE.WebGLRenderTarget;
 
-var _renderer;
-var _fboMesh;
-var _fboScene;
-var _fboCamera;
+var _renderer: THREE.WebGLRenderer;
+var _fboMesh: THREE.Mesh;
+var _fboScene: THREE.Scene;
+var _fboCamera: THREE.Camera;
 var _time = 0;
 
 export var TEXTURE_SIZE = settings.textureSize;
 export var AMOUNT = TEXTURE_SIZE * TEXTURE_SIZE;
 
-export var positionRenderTarget;
-export var prevPositionRenderTarget;
+export var positionRenderTarget: THREE.WebGLRenderTarget;
+export var prevPositionRenderTarget: THREE.WebGLRenderTarget;
 
-export function init(renderer) {
+export function init(renderer: THREE.WebGLRenderer) {
 
     _renderer = renderer;
 
@@ -49,8 +49,8 @@ export function init(renderer) {
 
     _copyShader = new THREE.ShaderMaterial({
         uniforms: {
-            resolution: { type: 'v2', value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
-            inputTexture: { type: 't', value: null }
+            resolution: { value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
+            inputTexture: { value: null }
         },
         vertexShader: shaderParse(fboVert),
         fragmentShader: shaderParse(fboThroughFrag)
@@ -58,12 +58,12 @@ export function init(renderer) {
 
     _velocityShader = new THREE.ShaderMaterial({
         uniforms: {
-            resolution: { type: 'v2', value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
-            mouse3d: { type: 'v3', value: new THREE.Vector3() },
-            texturePosition: { type: 't', value: null },
-            textureVelocity: { type: 't', value: null },
-            constraintRatio: { type: 'f', value: settings.constraintRatio },
-            time: { type: 'f', value: 0 },
+            resolution: { value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
+            mouse3d: { value: new THREE.Vector3() },
+            texturePosition: { value: null },
+            textureVelocity: { value: null },
+            constraintRatio: { value: settings.constraintRatio },
+            time: { value: 0 },
         },
         vertexShader: shaderParse(fboVert),
         fragmentShader: shaderParse(velocityFrag),
@@ -75,10 +75,10 @@ export function init(renderer) {
 
     _positionShader = new THREE.ShaderMaterial({
         uniforms: {
-            resolution: { type: 'v2', value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
-            texturePosition: { type: 't', value: null },
-            textureVelocity: { type: 't', value: null },
-            time: { type: 'f', value: 0 },
+            resolution: { value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
+            texturePosition: { value: null },
+            textureVelocity: { value: null },
+            time: { value: 0 },
         },
         vertexShader: shaderParse(fboVert),
         fragmentShader: shaderParse(positionFrag),
@@ -123,7 +123,7 @@ export function init(renderer) {
     return true;
 }
 
-function _updateVelocity() {
+function _updateVelocity(_dt: number) {
 
     // swap
     var tmp = _velocityRenderTarget;
@@ -139,7 +139,7 @@ function _updateVelocity() {
     _renderer.setRenderTarget( null );
 }
 
-function _updatePosition() {
+function _updatePosition(_dt: number) {
 
     // swap
     var tmp = _positionRenderTarget;
@@ -155,7 +155,7 @@ function _updatePosition() {
     _renderer.setRenderTarget( null );
 }
 
-function _copyTexture(input, output) {
+function _copyTexture(input: THREE.Texture, output: THREE.WebGLRenderTarget) {
     _fboMesh.material = _copyShader;
     _copyShader.uniforms.inputTexture.value = input;
     _renderer.setRenderTarget( output );
@@ -200,7 +200,7 @@ function _createPositionTexture() {
     return texture;
 }
 
-export function update(dt) {
+export function update(dt: number) {
 
     _time += dt;
 

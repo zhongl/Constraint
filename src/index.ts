@@ -13,15 +13,16 @@ import * as math from './utils/math';
 var raf = window.requestAnimationFrame.bind(window);
 
 
-var _gui;
+var _gui: GUI;
 var _width = 0;
 var _height = 0;
 
-var _control;
-var _camera;
-var _scene;
-var _renderer;
-var _skybox;
+var _control: OrbitControls;
+var _camera: THREE.PerspectiveCamera;
+var _scene: THREE.Scene;
+var _renderer: THREE.WebGLRenderer;
+var _skybox: THREE.Mesh;
+var _fog: THREE.FogExp2;
 
 var _time = 0;
 var _ray = new THREE.Ray();
@@ -45,7 +46,6 @@ function init() {
         return;
     }
     _renderer.debug.checkShaderErrors = true;
-    _renderer._useLegacyLights = true;
     _renderer.shadowMap.type = THREE.PCFShadowMap;
     _renderer.shadowMap.enabled = true;
     document.body.appendChild(_renderer.domElement);
@@ -53,14 +53,15 @@ function init() {
     // hyjack the render call and ignore the dummy rendering
     settings.ignoredMaterial = new THREE.Material();
     var fn = _renderer.renderBufferDirect;
-    _renderer.renderBufferDirect = function(camera, fog, geometry, material) {
+    _renderer.renderBufferDirect = function(camera, scene, geometry, material, object, group) {
         if(material !== settings.ignoredMaterial) {
-            fn.apply(this, arguments);
+            fn.call(this, camera, scene, geometry, material, object, group);
         }
     };
 
     _scene = new THREE.Scene();
-    _scene.fog = new THREE.FogExp2( 0x222222, 0.001 );
+    _fog = new THREE.FogExp2( 0x222222, 0.001 );
+    _scene.fog = _fog;
 
     _camera = new THREE.PerspectiveCamera( 45, 1, 1, 3000);
     _camera.position.set(0, 500, 1200).normalize().multiplyScalar(1500);
@@ -71,7 +72,7 @@ function init() {
     _control.minPolarAngle = 0.3;
     _control.maxPolarAngle = Math.PI / 2;
     _control.target.y = -30;
-    _control.noPan = true;
+    _control.enablePan = false;
     _control.update();
 
     if (!fbo.init(_renderer)) {
@@ -109,8 +110,11 @@ function init() {
     linesGui.add(settings, 'useWhiteNodes').name('white nodes');
     envGui.add(settings, 'isWhite').name('white theme').listen();
 
-    var preventDefault = function(evt){evt.preventDefault();this.blur();};
-    Array.prototype.forEach.call(_gui.domElement.querySelectorAll('input[type="checkbox"],select'), function(elem){
+    var preventDefault = (evt: KeyboardEvent) => {
+        evt.preventDefault();
+        (evt.currentTarget as HTMLElement).blur();
+    };
+    Array.prototype.forEach.call(_gui.domElement.querySelectorAll('input[type="checkbox"],select'), function(elem: HTMLInputElement | HTMLSelectElement){
         elem.onkeyup = elem.onkeydown = preventDefault;
         elem.style.color = '#000';
     });
@@ -137,19 +141,19 @@ function _showCompatibilityMessage() {
     document.body.innerHTML = '<main class="compatibility-message"><h1>无法运行此实验</h1><p>你的设备或浏览器不支持运行所需的 WebGL 浮点纹理能力。</p><p>请尝试使用最新版 Chrome、Safari 或 Firefox，并开启硬件加速。</p></main>';
 }
 
-function _onKeyUp(evt) {
+function _onKeyUp(evt: KeyboardEvent) {
     if(evt.keyCode === 32) {
         settings.isWhite = !settings.isWhite;
     }
 }
 
-function _bindTouch(func) {
-    return function (evt) {
+function _bindTouch(func: (evt: MouseEvent | Touch) => void) {
+    return function (evt: TouchEvent) {
         func(evt.changedTouches[0]);
     };
 }
 
-function _onMove(evt) {
+function _onMove(evt: MouseEvent | Touch) {
     // if(_isDown) {
         settings.mouse.x = (evt.pageX / _width) * 2 - 1;
         settings.mouse.y = -(evt.pageY / _height) * 2 + 1;
@@ -173,13 +177,13 @@ function _loop() {
     _time = newTime;
 }
 
-function _render(dt) {
+function _render(dt: number) {
 
     settings.whiteRatio += ((settings.isWhite ? 1 : 0) - settings.whiteRatio) * 0.2;
     settings.whiteNodesRatio += ((settings.useWhiteNodes ? 1 : 0) - settings.whiteNodesRatio) * 0.1;
 
-    _scene.fog.color.copy(BLACK).lerp(WHITE, settings.whiteRatio);
-    _renderer.setClearColor(_scene.fog.color.getHex());
+    _fog.color.copy(BLACK).lerp(WHITE, settings.whiteRatio);
+    _renderer.setClearColor(_fog.color.getHex());
 
     _initAnimation = Math.min(_initAnimation + dt * 0.0002, 1);
     var zoomAnimation = Math.pow(_initAnimation, 2);

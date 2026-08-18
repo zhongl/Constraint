@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-export var mesh;
-var spot;
+export var mesh: THREE.Object3D;
+var spot: THREE.SpotLight;
 
 export function init() {
 
@@ -25,14 +25,14 @@ export function init() {
     spot.shadow.camera.updateProjectionMatrix();
     // Preserve the r75 shadow camera across the r108 shadow matrix update.
     var updateShadowMatrices = spot.shadow.updateMatrices;
-    spot.shadow.updateMatrices = function (light, viewCamera, viewportIndex) {
-        var angle = light.angle;
-        var distance = light.distance;
-        light.angle = Math.PI / 4;
-        light.distance = 2500;
-        updateShadowMatrices.call(this, light, viewCamera, viewportIndex);
-        light.angle = angle;
-        light.distance = distance;
+    spot.shadow.updateMatrices = function (light: THREE.Light) {
+        var angle = spot.angle;
+        var distance = spot.distance;
+        spot.angle = Math.PI / 4;
+        spot.distance = 2500;
+        updateShadowMatrices.call(this, light);
+        spot.angle = angle;
+        spot.distance = distance;
     };
 
     spot.shadow.bias = 0;
@@ -42,4 +42,4 @@ export function init() {
 
 }
 
-export function update() {}
+export function update(_dt: number, _camera: THREE.Camera) {}
