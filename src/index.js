@@ -10,7 +10,6 @@ import * as lights from './3d/lights';
 import * as lines from './3d/lines';
 import * as nodes from './3d/nodes';
 import * as ground from './3d/ground';
-// import * as vignette from './3d/vignette';
 import * as math from './utils/math';
 
 var raf = window.requestAnimationFrame.bind(window);
@@ -106,8 +105,6 @@ function init() {
     _skybox.frustumCulled = false;
     _scene.add(_skybox);
 
-    // vignette.init(_renderer);
-    // _scene.add(vignette.mesh);
 
     _gui = new GUI();
     var linesGui = _gui.addFolder('Motion');
@@ -198,7 +195,6 @@ function _render(dt) {
 
     _scene.fog.color.copy(BLACK).lerp(WHITE, settings.whiteRatio);
     _renderer.setClearColor(_scene.fog.color.getHex());
-    // vignette.alphaUniform.value = math.lerp(0.5, 0.2, settings.whiteRatio);
 
     _initAnimation = Math.min(_initAnimation + dt * 0.0002, 1);
     var zoomAnimation = Math.pow(_initAnimation, 2);
@@ -218,7 +214,6 @@ function _render(dt) {
     fbo.update(dt);
     lines.update(dt);
     nodes.update(dt);
-    // vignette.update(dt);
 
     ground.update();
 
