@@ -1,6 +1,4 @@
 const settings = {
-    // need restart
-    useStats: false,
     textureSize: 128,
     lineAmount: 65536,
 

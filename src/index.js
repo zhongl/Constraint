@@ -1,6 +1,4 @@
 import GUI from 'lil-gui';
-// import Stats from 'stats.js';
-import css from 'dom-css';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import settings from './core/settings';
@@ -16,8 +14,6 @@ var raf = window.requestAnimationFrame.bind(window);
 
 
 var _gui;
-var _stats;
-
 var _width = 0;
 var _height = 0;
 
@@ -36,18 +32,6 @@ var BLACK = new THREE.Color(0x222222);
 var WHITE = new THREE.Color(0xeeeeee);
 
 function init() {
-
-    if(settings.useStats) {
-        _stats = new Stats();
-        css(_stats.domElement, {
-            position : 'absolute',
-            left : '0px',
-            top : '0px',
-            zIndex : 2048
-        });
-
-        document.body.appendChild( _stats.domElement );
-    }
 
     settings.mouse = new THREE.Vector2();
     settings.mouse3d = _ray.origin;
@@ -182,9 +166,7 @@ function _onResize() {
 function _loop() {
     var newTime = Date.now();
     raf(_loop);
-    if(settings.useStats) _stats.begin();
     _render(newTime - _time);
-    if(settings.useStats) _stats.end();
     _time = newTime;
 }
 

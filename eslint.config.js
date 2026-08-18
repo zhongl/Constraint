@@ -14,7 +14,6 @@ export default [
             "window",
             "document",
             "console",
-            "Stats",
             "alert",
             "WebGL2RenderingContext",
             "URL",

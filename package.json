@@ -6,7 +6,6 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "dom-css": "^2.1.0",
     "glsl-noise": "^0.0.0",
     "glsl-random": "^0.0.5",
     "lil-gui": "^0.21.0",
