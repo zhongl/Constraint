@@ -1,22 +1,18 @@
-var settings = require('../core/settings');
-var THREE = require('three');
-var shaderParse = require('../helpers/shaderParse');
-var glslify = require('glslify');
+import settings from '../core/settings';
+import * as THREE from 'three';
+import shaderParse from '../helpers/shaderParse';
+import nodeVert from '../glsl/node.vert';
+import nodeFrag from '../glsl/node.frag';
 
-var fbo = require('./fbo');
-var math = require('../utils/math');
+import * as fbo from './fbo';
+import * as math from '../utils/math';
 
-var undef;
-
-exports.init = init;
-exports.update = update;
-
-var mesh = exports.mesh = undef;
+export var mesh;
 
 var _geometry;
 var _material;
 
-function init() {
+export function init() {
 
     var PARTICLE_AMOUNT = fbo.AMOUNT;
     var TEXTURE_SIZE = fbo.TEXTURE_SIZE;
@@ -32,32 +28,31 @@ function init() {
         positions[i3 + 2] = Math.pow(math.hash(20 + i * 31.512), 5);
     }
     _geometry = new THREE.BufferGeometry();
-    _geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
+    _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
     _material = new THREE.ShaderMaterial( {
         uniforms: THREE.UniformsUtils.merge( [
-            THREE.UniformsLib.fog,
-            THREE.UniformsLib.shadowmap, {
+            THREE.UniformsLib.fog, {
             texturePosition: { type: 't', value: null },
             alpha: { type: 'f', value: 1 }
         }]),
-        vertexShader: shaderParse(glslify('../glsl/node.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/node.frag')),
+        vertexShader: shaderParse(nodeVert),
+        fragmentShader: shaderParse(nodeFrag),
         blending: THREE.AdditiveBlending,
         transparent: true,
         depthWrite: false,
         fog: true
     });
 
-    mesh = exports.mesh = new THREE.Points(_geometry, _material);
+    mesh = new THREE.Points(_geometry, _material);
 
 }
 
-function update(dt) {
+export function update() {
 
     mesh.visible = settings.useWhiteNodes;
 
-    var positionRenderTarget = fbo.positionRenderTarget;
-    _material.uniforms.texturePosition.value = positionRenderTarget;
+    var positionTexture = fbo.positionRenderTarget.texture;
+    _material.uniforms.texturePosition.value = positionTexture;
     _material.uniforms.alpha.value = 1 - settings.whiteRatio * 0.9;
 
 }

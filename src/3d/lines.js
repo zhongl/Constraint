@@ -1,24 +1,21 @@
-var settings = require('../core/settings');
-var THREE = require('three');
-var shaderParse = require('../helpers/shaderParse');
-var glslify = require('glslify');
+import settings from '../core/settings';
+import * as THREE from 'three';
+import shaderParse from '../helpers/shaderParse';
+import linesVert from '../glsl/lines.vert';
+import linesFrag from '../glsl/lines.frag';
+import lineDepthVert from '../glsl/lineDepth.vert';
+import lineDepthFrag from '../glsl/lineDepth.frag';
 
-var fbo = require('./fbo');
-var math = require('../utils/math');
-var MeshMotionMaterial = require('./postprocessing/motionBlur/MeshMotionMaterial');
+import * as fbo from './fbo';
+import * as math from '../utils/math';
 
-var undef;
-
-exports.init = init;
-exports.update = update;
-
-var mesh = exports.mesh = undef;
+export var mesh;
 
 var _geometry;
 var _material;
 var _depthMaterial;
 
-function init() {
+export function init() {
 
     var PARTICLE_AMOUNT = fbo.AMOUNT;
     var TEXTURE_SIZE = fbo.TEXTURE_SIZE;
@@ -44,20 +41,21 @@ function init() {
         positions[i6 + 5] = 1;
     }
     _geometry = new THREE.BufferGeometry();
-    _geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
-    _geometry.addAttribute( 'oppositeUv', new THREE.BufferAttribute( oppositeUv, 2 ));
+    _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
+    _geometry.setAttribute( 'oppositeUv', new THREE.BufferAttribute( oppositeUv, 2 ));
     _material = new THREE.ShaderMaterial( {
         uniforms: THREE.UniformsUtils.merge( [
             THREE.UniformsLib.fog,
-            THREE.UniformsLib.shadowmap, {
+            THREE.UniformsLib.lights, {
             texturePosition: { type: 't', value: null },
             whiteNodesRatio: { type: 'f', value: 1 },
             whiteRatio: { type: 'f', value: 1 }
         }]),
-        vertexShader: shaderParse(glslify('../glsl/lines.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/lines.frag')),
+        vertexShader: shaderParse(linesVert),
+        fragmentShader: shaderParse(linesFrag),
         linewidth: 1,
         blending: THREE.NoBlending,
+        lights: true,
         fog: true
     });
 
@@ -65,38 +63,25 @@ function init() {
         uniforms: {
             texturePosition: { type: 't', value: null },
         },
-        vertexShader: shaderParse(glslify('../glsl/lineDepth.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/lineDepth.frag')),
+        vertexShader: shaderParse(lineDepthVert),
+        fragmentShader: shaderParse(lineDepthFrag),
         depthTest: true,
         depthWrite: true
     });
 
-    mesh = exports.mesh = new THREE.LineSegments(_geometry, _material);
+    mesh = new THREE.LineSegments(_geometry, _material);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     mesh.frustumCulled = false;
     mesh.customDepthMaterial = _depthMaterial;
 
-    // mesh.motionMaterial = new MeshMotionMaterial( {
-    //     uniforms: {
-    //         texturePosition: { type: 't', value: undef },
-    //         texturePrevPosition: { type: 't', value: undef }
-    //     },
-    //     vertexShader: shaderParse(glslify('../glsl/linesMotion.vert')),
-    //     depthTest: true,
-    //     depthWrite: true,
-    //     blending: THREE.NoBlending
-    // });
-
 }
 
-function update(dt) {
+export function update() {
 
-    var positionRenderTarget = fbo.positionRenderTarget;
-    _material.uniforms.texturePosition.value = positionRenderTarget;
-    _depthMaterial.uniforms.texturePosition.value = positionRenderTarget;
-    // mesh.motionMaterial.uniforms.texturePrevPosition.value = fbo.prevPositionRenderTarget;
-
+    var positionTexture = fbo.positionRenderTarget.texture;
+    _material.uniforms.texturePosition.value = positionTexture;
+    _depthMaterial.uniforms.texturePosition.value = positionTexture;
     _material.uniforms.whiteNodesRatio.value = settings.whiteNodesRatio;
     _material.uniforms.whiteRatio.value = settings.whiteRatio;
 

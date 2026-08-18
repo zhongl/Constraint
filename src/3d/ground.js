@@ -1,11 +1,7 @@
-var settings = require('../core/settings');
-var THREE = require('three');
+import settings from '../core/settings';
+import * as THREE from 'three';
 
-var undef;
-
-var mesh = exports.mesh = undef;
-exports.init = init;
-exports.update = update;
+export var mesh;
 
 var _geometry;
 var _material;
@@ -13,7 +9,7 @@ var _material;
 var BLACK = new THREE.Color(0x111111);
 var WHITE = new THREE.Color(0xcccccc);
 
-function init() {
+export function init() {
     _geometry = new THREE.PlaneGeometry( 4000, 4000, 10, 10 );
     _material = new THREE.MeshPhongMaterial( {
         color: new THREE.Color(),
@@ -22,7 +18,7 @@ function init() {
     });
 
 
-    mesh = exports.mesh = new THREE.Mesh( _geometry, _material );
+    mesh = new THREE.Mesh( _geometry, _material );
     mesh.position.y = -200;
     mesh.rotation.x = -1.57;
     mesh.castShadow = false;
@@ -30,7 +26,7 @@ function init() {
 
 }
 
-function update() {
-    mesh.visible = !settings.useReflectedGround;
+export function update() {
+    mesh.visible = true;
     _material.color.copy(BLACK).lerp(WHITE, settings.whiteRatio);
 }

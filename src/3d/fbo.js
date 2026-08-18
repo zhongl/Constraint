@@ -1,10 +1,10 @@
-var settings = require('../core/settings');
-var THREE = require('three');
-
-var undef;
-
-var glslify = require('glslify');
-var shaderParse = require('../helpers/shaderParse');
+import settings from '../core/settings';
+import * as THREE from 'three';
+import shaderParse from '../helpers/shaderParse';
+import fboVert from '../glsl/fbo.vert';
+import fboThroughFrag from '../glsl/fboThrough.frag';
+import velocityFrag from '../glsl/velocity.frag';
+import positionFrag from '../glsl/position.frag';
 
 var _copyShader;
 var _velocityShader;
@@ -20,16 +20,13 @@ var _fboScene;
 var _fboCamera;
 var _time = 0;
 
-var TEXTURE_SIZE = exports.TEXTURE_SIZE = settings.textureSize;
-var AMOUNT = exports.AMOUNT = TEXTURE_SIZE * TEXTURE_SIZE;
+export var TEXTURE_SIZE = settings.textureSize;
+export var AMOUNT = TEXTURE_SIZE * TEXTURE_SIZE;
 
-exports.init = init;
-exports.update = update;
+export var positionRenderTarget;
+export var prevPositionRenderTarget;
 
-exports.positionRenderTarget = undef;
-exports.prevPositionRenderTarget = undef;
-
-function init(renderer) {
+export function init(renderer) {
 
     _renderer = renderer;
 
@@ -38,7 +35,9 @@ function init(renderer) {
         alert( 'No support for vertex shader textures!' );
         return;
     }
-    if ( !gl.getExtension( 'OES_texture_float' )) {
+    var isWebGL2 = typeof WebGL2RenderingContext !== 'undefined' &&
+        gl instanceof WebGL2RenderingContext;
+    if ( !isWebGL2 && !gl.getExtension( 'OES_texture_float' )) {
         alert( 'No OES_texture_float support for float textures!' );
         return;
     }
@@ -50,10 +49,10 @@ function init(renderer) {
     _copyShader = new THREE.ShaderMaterial({
         uniforms: {
             resolution: { type: 'v2', value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
-            texture: { type: 't', value: null }
+            inputTexture: { type: 't', value: null }
         },
-        vertexShader: shaderParse(glslify('../glsl/fbo.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/fboThrough.frag'))
+        vertexShader: shaderParse(fboVert),
+        fragmentShader: shaderParse(fboThroughFrag)
     });
 
     _velocityShader = new THREE.ShaderMaterial({
@@ -65,8 +64,8 @@ function init(renderer) {
             constraintRatio: { type: 'f', value: settings.constraintRatio },
             time: { type: 'f', value: 0 },
         },
-        vertexShader: shaderParse(glslify('../glsl/fbo.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/velocity.frag')),
+        vertexShader: shaderParse(fboVert),
+        fragmentShader: shaderParse(velocityFrag),
         blending: THREE.NoBlending,
         transparent: false,
         depthWrite: false,
@@ -80,15 +79,15 @@ function init(renderer) {
             textureVelocity: { type: 't', value: null },
             time: { type: 'f', value: 0 },
         },
-        vertexShader: shaderParse(glslify('../glsl/fbo.vert')),
-        fragmentShader: shaderParse(glslify('../glsl/position.frag')),
+        vertexShader: shaderParse(fboVert),
+        fragmentShader: shaderParse(positionFrag),
         blending: THREE.NoBlending,
         transparent: false,
         depthWrite: false,
         depthTest: false
     });
 
-    _fboMesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ), _copyShader );
+    _fboMesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), _copyShader );
     _fboScene.add( _fboMesh );
 
     _velocityRenderTarget = new THREE.WebGLRenderTarget( TEXTURE_SIZE, TEXTURE_SIZE, {
@@ -103,7 +102,7 @@ function init(renderer) {
     });
     _velocityRenderTarget2 = _velocityRenderTarget.clone();
     _copyTexture(_createVelocityTexture(), _velocityRenderTarget);
-    _copyTexture(_velocityRenderTarget, _velocityRenderTarget2);
+    _copyTexture(_velocityRenderTarget.texture, _velocityRenderTarget2);
 
     _positionRenderTarget = new THREE.WebGLRenderTarget(TEXTURE_SIZE, TEXTURE_SIZE, {
         wrapS: THREE.RepeatWrapping,
@@ -118,11 +117,11 @@ function init(renderer) {
     _positionRenderTarget2 = _positionRenderTarget.clone();
 
     _copyTexture(_createPositionTexture(), _positionRenderTarget);
-    _copyTexture(_positionRenderTarget, _positionRenderTarget2);
+    _copyTexture(_positionRenderTarget.texture, _positionRenderTarget2);
 
 }
 
-function _updateVelocity(dt) {
+function _updateVelocity() {
 
     // swap
     var tmp = _velocityRenderTarget;
@@ -131,12 +130,14 @@ function _updateVelocity(dt) {
 
     _fboMesh.material = _velocityShader;
     _velocityShader.uniforms.time.value = _time;
-    _velocityShader.uniforms.textureVelocity.value = _velocityRenderTarget2;
-    _velocityShader.uniforms.texturePosition.value = _positionRenderTarget;
-    _renderer.render( _fboScene, _fboCamera, _velocityRenderTarget );
+    _velocityShader.uniforms.textureVelocity.value = _velocityRenderTarget2.texture;
+    _velocityShader.uniforms.texturePosition.value = _positionRenderTarget.texture;
+    _renderer.setRenderTarget( _velocityRenderTarget );
+    _renderer.render( _fboScene, _fboCamera );
+    _renderer.setRenderTarget( null );
 }
 
-function _updatePosition(dt) {
+function _updatePosition() {
 
     // swap
     var tmp = _positionRenderTarget;
@@ -145,15 +146,19 @@ function _updatePosition(dt) {
 
     _fboMesh.material = _positionShader;
     _positionShader.uniforms.time.value = _time;
-    _positionShader.uniforms.textureVelocity.value = _velocityRenderTarget;
-    _positionShader.uniforms.texturePosition.value = _positionRenderTarget2;
-    _renderer.render( _fboScene, _fboCamera, _positionRenderTarget );
+    _positionShader.uniforms.textureVelocity.value = _velocityRenderTarget.texture;
+    _positionShader.uniforms.texturePosition.value = _positionRenderTarget2.texture;
+    _renderer.setRenderTarget( _positionRenderTarget );
+    _renderer.render( _fboScene, _fboCamera );
+    _renderer.setRenderTarget( null );
 }
 
 function _copyTexture(input, output) {
     _fboMesh.material = _copyShader;
-    _copyShader.uniforms.texture.value = input;
-    _renderer.render( _fboScene, _fboCamera, output );
+    _copyShader.uniforms.inputTexture.value = input;
+    _renderer.setRenderTarget( output );
+    _renderer.render( _fboScene, _fboCamera );
+    _renderer.setRenderTarget( null );
 }
 
 function _createVelocityTexture() {
@@ -193,7 +198,7 @@ function _createPositionTexture() {
     return texture;
 }
 
-function update(dt) {
+export function update(dt) {
 
     _time += dt;
 
@@ -210,8 +215,8 @@ function update(dt) {
 
     _updatePosition(dt);
 
-    exports.positionRenderTarget = _positionRenderTarget;
-    exports.prevPositionRenderTarget = _positionRenderTarget2;
+    positionRenderTarget = _positionRenderTarget;
+    prevPositionRenderTarget = _positionRenderTarget2;
 }
 
 

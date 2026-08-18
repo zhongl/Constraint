@@ -14,7 +14,6 @@ void main() {
     float c = d * vAlpha;
 
     // chunk(fog_fragment);
-    // chunk(linear_to_gamma_fragment);
 
     gl_FragColor = vec4(outgoingLight * c, 1.0);
 }
