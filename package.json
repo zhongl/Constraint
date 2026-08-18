@@ -15,11 +15,13 @@
     "@eslint/js": "^10.0.1",
     "eslint": "^10.8.1",
     "glslify": "^7.1.1",
+    "typescript": "^7.0.2",
     "vite": "^8.2.1"
   },
   "scripts": {
     "dev": "vite",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
     "build": "vite build",
     "check": "pnpm lint && pnpm build",
     "preview": "pnpm build && vite preview"
