@@ -5,158 +5,150 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { ConstraintEffect } from '@constraint/effect';
 
-var raf = window.requestAnimationFrame.bind(window);
+class App {
+    private readonly _raf = window.requestAnimationFrame.bind(window);
 
+    private _gui!: GUI;
+    private _width = 0;
+    private _height = 0;
 
-var _gui: GUI;
-var _width = 0;
-var _height = 0;
+    private _control!: OrbitControls;
+    private _camera!: THREE.PerspectiveCamera;
+    private _scene!: THREE.Scene;
+    private _renderer!: THREE.WebGLRenderer;
+    private _effect!: ConstraintEffect;
 
-var _control: OrbitControls;
-var _camera: THREE.PerspectiveCamera;
-var _scene: THREE.Scene;
-var _renderer: THREE.WebGLRenderer;
-var _effect: ConstraintEffect;
+    private _time = 0;
+    private readonly _mouse = new THREE.Vector2();
+    private readonly _ray = new THREE.Ray();
 
-var _time = 0;
-var _mouse = new THREE.Vector2();
-var _ray = new THREE.Ray();
+    private _initAnimation = 0;
 
-var _initAnimation = 0;
+    init(): void {
+        try {
+            this._renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+        } catch {
+            this._showCompatibilityMessage();
+            return;
+        }
+        this._renderer.debug.checkShaderErrors = true;
+        this._renderer.shadowMap.type = THREE.PCFShadowMap;
+        this._renderer.shadowMap.enabled = true;
+        document.body.appendChild(this._renderer.domElement);
 
-function init() {
+        this._scene = new THREE.Scene();
 
-    try {
-        _renderer = new THREE.WebGLRenderer({
-            antialias : true
+        this._camera = new THREE.PerspectiveCamera(45, 1, 1, 3000);
+        this._camera.position.set(0, 500, 1200).normalize().multiplyScalar(1500);
+
+        this._control = new OrbitControls(this._camera, this._renderer.domElement);
+        this._control.minDistance = 600;
+        this._control.maxDistance = 1500;
+        this._control.minPolarAngle = 0.3;
+        this._control.maxPolarAngle = Math.PI / 2;
+        this._control.target.y = -30;
+        this._control.enablePan = false;
+        this._control.update();
+
+        this._effect = new ConstraintEffect(this._renderer, this._scene);
+        if (!this._effect.init()) {
+            this._renderer.dispose();
+            this._renderer.domElement.remove();
+            this._showCompatibilityMessage();
+            return;
+        }
+
+        this._gui = new GUI();
+        const linesGui = this._gui.addFolder('Motion');
+        linesGui.add(this._effect, 'constraintRatio', 0, 0.15).name('constraint ratio');
+        linesGui.add(this._effect, 'followPointer').name('follow mouse');
+
+        const envGui = this._gui.addFolder('Rendering');
+        linesGui.add(this._effect, 'useWhiteNodes').name('white nodes');
+        envGui.add(this._effect, 'isWhite').listen();
+
+        const preventDefault = (evt: KeyboardEvent) => {
+            evt.preventDefault();
+            (evt.currentTarget as HTMLElement).blur();
+        };
+        Array.prototype.forEach.call(this._gui.domElement.querySelectorAll('input[type="checkbox"],select'), function(elem: HTMLInputElement | HTMLSelectElement) {
+            elem.onkeyup = elem.onkeydown = preventDefault;
+            elem.style.color = '#000';
         });
-    } catch {
-        _showCompatibilityMessage();
-        return;
-    }
-    _renderer.debug.checkShaderErrors = true;
-    _renderer.shadowMap.type = THREE.PCFShadowMap;
-    _renderer.shadowMap.enabled = true;
-    document.body.appendChild(_renderer.domElement);
 
-    _scene = new THREE.Scene();
+        if (window.screen.width > 480) {
+            linesGui.open();
+            envGui.open();
+        }
 
-    _camera = new THREE.PerspectiveCamera( 45, 1, 1, 3000);
-    _camera.position.set(0, 500, 1200).normalize().multiplyScalar(1500);
+        window.addEventListener('resize', this._onResize.bind(this));
+        window.addEventListener('mousemove', this._onMove.bind(this));
+        window.addEventListener('touchmove', this._bindTouch(this._onMove.bind(this)));
+        document.addEventListener('keyup', this._onKeyUp.bind(this));
 
-    _control = new OrbitControls( _camera, _renderer.domElement );
-    _control.minDistance = 600;
-    _control.maxDistance = 1500;
-    _control.minPolarAngle = 0.3;
-    _control.maxPolarAngle = Math.PI / 2;
-    _control.target.y = -30;
-    _control.enablePan = false;
-    _control.update();
-
-    _effect = new ConstraintEffect(_renderer, _scene);
-    if (!_effect.init()) {
-        _renderer.dispose();
-        _renderer.domElement.remove();
-        _showCompatibilityMessage();
-        return;
+        this._time = Date.now();
+        this._onResize();
+        this._loop();
     }
 
-
-    _gui = new GUI();
-    var linesGui = _gui.addFolder('Motion');
-    linesGui.add(_effect, 'constraintRatio', 0, 0.15).name('constraint ratio');
-    linesGui.add(_effect, 'followPointer').name('follow mouse');
-
-    var envGui = _gui.addFolder('Rendering');
-    linesGui.add(_effect, 'useWhiteNodes').name('white nodes');
-    envGui.add(_effect, 'isWhite').name('white theme').listen();
-
-    var preventDefault = (evt: KeyboardEvent) => {
-        evt.preventDefault();
-        (evt.currentTarget as HTMLElement).blur();
-    };
-    Array.prototype.forEach.call(_gui.domElement.querySelectorAll('input[type="checkbox"],select'), function(elem: HTMLInputElement | HTMLSelectElement){
-        elem.onkeyup = elem.onkeydown = preventDefault;
-        elem.style.color = '#000';
-    });
-
-
-
-    if(window.screen.width > 480) {
-        linesGui.open();
-        envGui.open();
+    private _showCompatibilityMessage(): void {
+        document.body.innerHTML = '<main class="compatibility-message"><h1>无法运行此实验</h1><p>你的设备或浏览器不支持运行所需的 WebGL 浮点纹理能力。</p><p>请尝试使用最新版 Chrome、Safari 或 Firefox，并开启硬件加速。</p></main>';
     }
 
-    window.addEventListener('resize', _onResize);
-    window.addEventListener('mousemove', _onMove);
-    window.addEventListener('touchmove', _bindTouch(_onMove));
-    document.addEventListener('keyup', _onKeyUp);
+    private _onKeyUp(evt: KeyboardEvent): void {
+        if (evt.keyCode === 32) {
+            this._effect.isWhite = !this._effect.isWhite;
+        }
+    }
 
-    _time = Date.now();
-    _onResize();
-    _loop();
+    private _bindTouch(func: (evt: MouseEvent | Touch) => void): (evt: TouchEvent) => void {
+        return (evt: TouchEvent) => {
+            func(evt.changedTouches[0]!);
+        };
+    }
 
-}
+    private _onMove(evt: MouseEvent | Touch): void {
+        this._mouse.x = (evt.pageX / this._width) * 2 - 1;
+        this._mouse.y = -(evt.pageY / this._height) * 2 + 1;
+    }
 
-function _showCompatibilityMessage() {
-    document.body.innerHTML = '<main class="compatibility-message"><h1>无法运行此实验</h1><p>你的设备或浏览器不支持运行所需的 WebGL 浮点纹理能力。</p><p>请尝试使用最新版 Chrome、Safari 或 Firefox，并开启硬件加速。</p></main>';
-}
+    private _onResize(): void {
+        this._width = window.innerWidth;
+        this._height = window.innerHeight;
 
-function _onKeyUp(evt: KeyboardEvent) {
-    if(evt.keyCode === 32) {
-        _effect.isWhite = !_effect.isWhite;
+        this._camera.aspect = this._width / this._height;
+        this._camera.updateProjectionMatrix();
+        this._renderer.setSize(this._width, this._height);
+    }
+
+    private _loop(): void {
+        const newTime = Date.now();
+        this._raf(this._loop.bind(this));
+        this._render(newTime - this._time);
+        this._time = newTime;
+    }
+
+    private _render(dt: number): void {
+        this._initAnimation = Math.min(this._initAnimation + dt * 0.0002, 1);
+        const zoomAnimation = Math.pow(this._initAnimation, 2);
+
+        this._control.maxDistance = zoomAnimation === 1 ? 1500 : 1500 + (900 - 1500) * zoomAnimation;
+        this._control.update();
+
+        this._camera.updateMatrixWorld();
+        this._ray.origin.setFromMatrixPosition(this._camera.matrixWorld);
+        this._ray.direction.set(this._mouse.x, this._mouse.y, 0.5).unproject(this._camera).sub(this._ray.origin).normalize();
+        const distance = this._ray.origin.length() / Math.cos(Math.PI - this._ray.direction.angleTo(this._ray.origin));
+        this._ray.origin.add(this._ray.direction.multiplyScalar(distance * 0.9));
+        this._effect.setPointer(this._ray.origin);
+        this._effect.update(dt, this._camera);
+
+        this._renderer.render(this._scene, this._camera);
+
+        document.documentElement.classList.toggle('is-white', this._effect.isWhite);
     }
 }
 
-function _bindTouch(func: (evt: MouseEvent | Touch) => void) {
-    return function (evt: TouchEvent) {
-        func(evt.changedTouches[0]);
-    };
-}
-
-function _onMove(evt: MouseEvent | Touch) {
-    // if(_isDown) {
-        _mouse.x = (evt.pageX / _width) * 2 - 1;
-        _mouse.y = -(evt.pageY / _height) * 2 + 1;
-    // }
-}
-
-function _onResize() {
-    _width = window.innerWidth;
-    _height = window.innerHeight;
-
-    _camera.aspect = _width / _height;
-    _camera.updateProjectionMatrix();
-    _renderer.setSize(_width, _height);
-
-}
-
-function _loop() {
-    var newTime = Date.now();
-    raf(_loop);
-    _render(newTime - _time);
-    _time = newTime;
-}
-
-function _render(dt: number) {
-
-    _initAnimation = Math.min(_initAnimation + dt * 0.0002, 1);
-    var zoomAnimation = Math.pow(_initAnimation, 2);
-
-    _control.maxDistance = zoomAnimation === 1 ? 1500 : 1500 + (900 - 1500) * zoomAnimation;
-    _control.update();
-
-    _camera.updateMatrixWorld();
-    _ray.origin.setFromMatrixPosition( _camera.matrixWorld );
-    _ray.direction.set( _mouse.x, _mouse.y, 0.5 ).unproject( _camera ).sub( _ray.origin ).normalize();
-    var distance = _ray.origin.length() / Math.cos(Math.PI - _ray.direction.angleTo(_ray.origin));
-    _ray.origin.add( _ray.direction.multiplyScalar(distance * 0.9)); // make it a bit closer to the camerato see more white edges
-    _effect.setPointer(_ray.origin);
-    _effect.update(dt, _camera);
-
-    _renderer.render(_scene, _camera);
-
-    document.documentElement.classList.toggle('is-white', _effect.isWhite);
-}
-
-init();
+new App().init();

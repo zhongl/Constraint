@@ -18,20 +18,20 @@ export class ConstraintNodes {
         this._fbo = fbo;
     }
 
-    init() {
-        var particleAmount = this._fbo.amount;
-        var textureSize = this._fbo.textureSize;
-        var positions = new Float32Array(particleAmount * 3);
+    init(): void {
+        const particleAmount = this._fbo.amount;
+        const textureSize = this._fbo.textureSize;
+        const positions = new Float32Array(particleAmount * 3);
 
-        var i3;
-        for(var i = 0; i < particleAmount; ++i ) {
+        let i3;
+        for(let i = 0; i < particleAmount; ++i ) {
             i3 = i * 3;
             positions[i3] = (i % textureSize) / textureSize;
             positions[i3 + 1] = ~~(i / textureSize) / textureSize;
             positions[i3 + 2] = Math.pow(math.hash(20 + i * 31.512), 5);
         }
 
-        var geometry = new THREE.BufferGeometry();
+        const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         this._material = new THREE.ShaderMaterial({
             uniforms: THREE.UniformsUtils.merge([
@@ -50,14 +50,14 @@ export class ConstraintNodes {
         this.mesh = new THREE.Points(geometry, this._material);
     }
 
-    dispose() {
+    dispose(): void {
         this.mesh.geometry.dispose();
         this._material.dispose();
     }
 
-    update() {
+    update(): void {
         this.mesh.visible = this._settings.useWhiteNodes;
-        this._material.uniforms.texturePosition.value = this._fbo.positionRenderTarget.texture;
-        this._material.uniforms.alpha.value = 1 - this._settings.whiteRatio * 0.9;
+        this._material.uniforms.texturePosition!.value = this._fbo.positionRenderTarget.texture;
+        this._material.uniforms.alpha!.value = 1 - this._settings.whiteRatio * 0.9;
     }
 }

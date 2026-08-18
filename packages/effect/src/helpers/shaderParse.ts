@@ -1,9 +1,9 @@
 import * as THREE from 'three';
 
-var threeChunkReplaceRegExp = /\/\/\s?chunk_replace\s(.+)([\d\D]+)\/\/\s?end_chunk_replace/gm;
-var threeChunkRegExp = /\/\/\s?chunk\(\s?(\w+)\s?\);/g;
-var glslifyBugFixRegExp = /(_\d+_\d+)(_\d+_\d+)+/g;
-var glslifyGlobalRegExp = /GLOBAL_VAR_(.+)(_\d+_\d+)+/g;
+const threeChunkReplaceRegExp = /\/\/\s?chunk_replace\s(.+)([\d\D]+)\/\/\s?end_chunk_replace/gm;
+const threeChunkRegExp = /\/\/\s?chunk\(\s?(\w+)\s?\);/g;
+const glslifyBugFixRegExp = /(_\d+_\d+)(_\d+_\d+)+/g;
+const glslifyGlobalRegExp = /GLOBAL_VAR_(.+)(_\d+_\d+)+/g;
 
 let _chunkReplaceObj: Record<string, string>;
 
@@ -30,9 +30,9 @@ function _storeChunkReplaceFunc(_a: string, b: string, c: string): string {
 }
 
 function _replaceThreeChunkFunc(_a: string, b: string): string {
-    var str = THREE.ShaderChunk[b as keyof typeof THREE.ShaderChunk] + '\n';
-    for(var id in _chunkReplaceObj) {
-        str = str.replace(id, _chunkReplaceObj[id]);
+    let str = THREE.ShaderChunk[b as keyof typeof THREE.ShaderChunk] + '\n';
+    for(const id in _chunkReplaceObj) {
+        str = str.replace(id, _chunkReplaceObj[id]!);
     }
     return str;
 }

@@ -4,9 +4,18 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "paths": {
+      "@constraint/effect": ["./packages/effect/src/index.ts"]
+    },
     "allowJs": true,
     "checkJs": false,
     "strict": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
     "noEmit": true,
     "skipLibCheck": true,
     "types": ["vite/client"]

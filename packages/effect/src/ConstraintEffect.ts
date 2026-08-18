@@ -6,8 +6,8 @@ import { ConstraintLines } from './3d/lines';
 import { ConstraintNodes } from './3d/nodes';
 import { createSettings } from './core/settings';
 
-var BLACK = new THREE.Color(0x222222);
-var WHITE = new THREE.Color(0xeeeeee);
+const BLACK = new THREE.Color(0x222222);
+const WHITE = new THREE.Color(0xeeeeee);
 
 export class ConstraintEffect {
     private readonly _renderer: THREE.WebGLRenderer;
@@ -15,10 +15,10 @@ export class ConstraintEffect {
     private readonly _fog = new THREE.FogExp2(0x222222, 0.001);
     private readonly _settings = createSettings();
     private readonly _fbo = new Fbo(this._settings);
-    private _lines!: ConstraintLines;
-    private _nodes!: ConstraintNodes;
-    private _ground!: ConstraintGround;
-    private _lights!: ConstraintLights;
+    private readonly _lines: ConstraintLines;
+    private readonly _nodes: ConstraintNodes;
+    private readonly _ground: ConstraintGround;
+    private readonly _lights: ConstraintLights;
     private readonly _skybox: THREE.Mesh;
     private _originalRenderBufferDirect!: THREE.WebGLRenderer['renderBufferDirect'];
 
@@ -26,9 +26,13 @@ export class ConstraintEffect {
         this._renderer = renderer;
         this._scene = scene;
         this._skybox = new THREE.Mesh(new THREE.IcosahedronGeometry(128, 2));
+        this._lights = new ConstraintLights();
+        this._lines = new ConstraintLines(this._settings, this._fbo);
+        this._nodes = new ConstraintNodes(this._settings, this._fbo);
+        this._ground = new ConstraintGround(this._settings);
     }
 
-    get constraintRatio() {
+    get constraintRatio(): number {
         return this._settings.constraintRatio;
     }
 
@@ -36,7 +40,7 @@ export class ConstraintEffect {
         this._settings.constraintRatio = value;
     }
 
-    get followPointer() {
+    get followPointer(): boolean {
         return this._settings.followMouse;
     }
 
@@ -44,7 +48,7 @@ export class ConstraintEffect {
         this._settings.followMouse = value;
     }
 
-    get useWhiteNodes() {
+    get useWhiteNodes(): boolean {
         return this._settings.useWhiteNodes;
     }
 
@@ -52,7 +56,7 @@ export class ConstraintEffect {
         this._settings.useWhiteNodes = value;
     }
 
-    get isWhite() {
+    get isWhite(): boolean {
         return this._settings.isWhite;
     }
 
@@ -60,12 +64,12 @@ export class ConstraintEffect {
         this._settings.isWhite = value;
     }
 
-    init() {
+    init(): boolean {
         this._settings.mouse3d = new THREE.Vector3();
         this._settings.ignoredMaterial = new THREE.Material();
 
-        var settings = this._settings;
-        var fn = this._renderer.renderBufferDirect;
+        const settings = this._settings;
+        const fn = this._renderer.renderBufferDirect;
         this._originalRenderBufferDirect = fn;
         this._renderer.renderBufferDirect = function(camera, scene, geometry, material, object, group) {
             if (material !== settings.ignoredMaterial) {
@@ -77,19 +81,15 @@ export class ConstraintEffect {
 
         if (!this._fbo.init(this._renderer)) return false;
 
-        this._lights = new ConstraintLights();
         this._lights.init();
         this._scene.add(this._lights.mesh);
 
-        this._lines = new ConstraintLines(this._settings, this._fbo);
         this._lines.init();
         this._scene.add(this._lines.mesh);
 
-        this._nodes = new ConstraintNodes(this._settings, this._fbo);
         this._nodes.init();
         this._scene.add(this._nodes.mesh);
 
-        this._ground = new ConstraintGround(this._settings);
         this._ground.init();
         this._scene.add(this._ground.mesh);
 
@@ -101,11 +101,11 @@ export class ConstraintEffect {
         return true;
     }
 
-    setPointer(position: THREE.Vector3) {
+    setPointer(position: THREE.Vector3): void {
         this._settings.mouse3d.copy(position);
     }
 
-    dispose() {
+    dispose(): void {
         this._scene.remove(this._lights.mesh, this._lines.mesh, this._nodes.mesh, this._ground.mesh, this._skybox);
         this._lights.dispose();
         this._lines.dispose();
@@ -118,7 +118,7 @@ export class ConstraintEffect {
         this._renderer.renderBufferDirect = this._originalRenderBufferDirect;
     }
 
-    update(dt: number, camera: THREE.PerspectiveCamera) {
+    update(dt: number, camera: THREE.PerspectiveCamera): void {
         this._settings.whiteRatio += ((this._settings.isWhite ? 1 : 0) - this._settings.whiteRatio) * 0.2;
         this._settings.whiteNodesRatio += ((this._settings.useWhiteNodes ? 1 : 0) - this._settings.whiteNodesRatio) * 0.1;
 

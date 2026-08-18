@@ -24,7 +24,7 @@
   "devDependencies": {
     "@types/three": "^0.185.4",
     "glslify": "^7.1.1",
-    "typescript": "^7.0.2",
+    "typescript": "^6.0.3",
     "vite": "^8.2.1"
   }
 }

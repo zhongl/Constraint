@@ -21,16 +21,16 @@ export class ConstraintLines {
         this._fbo = fbo;
     }
 
-    init() {
-        var particleAmount = this._fbo.amount;
-        var textureSize = this._fbo.textureSize;
-        var lineAmount = this._settings.lineAmount;
+    init(): void {
+        const particleAmount = this._fbo.amount;
+        const textureSize = this._fbo.textureSize;
+        const lineAmount = this._settings.lineAmount;
 
-        var positions = new Float32Array(lineAmount * 2 * 3);
-        var oppositeUv = new Float32Array(lineAmount * 2 * 2);
+        const positions = new Float32Array(lineAmount * 2 * 3);
+        const oppositeUv = new Float32Array(lineAmount * 2 * 2);
 
-        var i4, i6, indexA, indexB;
-        for(var i = 0; i < lineAmount; ++i ) {
+        let i4, i6, indexA, indexB;
+        for(let i = 0; i < lineAmount; ++i ) {
             i4 = i * 4;
             i6 = i * 6;
             indexA = i % particleAmount;
@@ -45,7 +45,7 @@ export class ConstraintLines {
             positions[i6 + 5] = 1;
         }
 
-        var geometry = new THREE.BufferGeometry();
+        const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
         geometry.setAttribute('oppositeUv', new THREE.BufferAttribute(oppositeUv, 2));
         this._material = new THREE.ShaderMaterial({
@@ -81,17 +81,17 @@ export class ConstraintLines {
         this.mesh.customDepthMaterial = this._depthMaterial;
     }
 
-    dispose() {
+    dispose(): void {
         this.mesh.geometry.dispose();
         this._material.dispose();
         this._depthMaterial.dispose();
     }
 
-    update() {
-        var positionTexture = this._fbo.positionRenderTarget.texture;
-        this._material.uniforms.texturePosition.value = positionTexture;
-        this._depthMaterial.uniforms.texturePosition.value = positionTexture;
-        this._material.uniforms.whiteNodesRatio.value = this._settings.whiteNodesRatio;
-        this._material.uniforms.whiteRatio.value = this._settings.whiteRatio;
+    update(): void {
+        const positionTexture = this._fbo.positionRenderTarget.texture;
+        this._material.uniforms.texturePosition!.value = positionTexture;
+        this._depthMaterial.uniforms.texturePosition!.value = positionTexture;
+        this._material.uniforms.whiteNodesRatio!.value = this._settings.whiteNodesRatio;
+        this._material.uniforms.whiteRatio!.value = this._settings.whiteRatio;
     }
 }
