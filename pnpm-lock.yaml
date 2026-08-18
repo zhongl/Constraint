@@ -40,6 +40,12 @@ importers:
         specifier: ^8.2.1
         version: 8.2.1
 
+  packages/effect:
+    dependencies:
+      three:
+        specifier: 0.185.1
+        version: 0.185.1
+
 packages:
 
   '@choojs/findup@0.2.1':
