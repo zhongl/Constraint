@@ -3,8 +3,7 @@ import '../styles/index.css';
 import GUI from 'lil-gui';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { ConstraintEffect } from '../effect/ConstraintEffect';
-import * as math from '../utils/math';
+import { ConstraintEffect } from '@constraint/effect';
 
 var raf = window.requestAnimationFrame.bind(window);
 
@@ -144,7 +143,7 @@ function _render(dt: number) {
     _initAnimation = Math.min(_initAnimation + dt * 0.0002, 1);
     var zoomAnimation = Math.pow(_initAnimation, 2);
 
-    _control.maxDistance = zoomAnimation === 1 ? 1500 : math.lerp(1500, 900, zoomAnimation);
+    _control.maxDistance = zoomAnimation === 1 ? 1500 : 1500 + (900 - 1500) * zoomAnimation;
     _control.update();
 
     _camera.updateMatrixWorld();

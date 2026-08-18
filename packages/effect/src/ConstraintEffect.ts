@@ -1,10 +1,10 @@
 import * as THREE from 'three';
-import { Fbo } from '../3d/fbo';
-import { ConstraintGround } from '../3d/ground';
-import { ConstraintLights } from '../3d/lights';
-import { ConstraintLines } from '../3d/lines';
-import { ConstraintNodes } from '../3d/nodes';
-import { createSettings } from '../core/settings';
+import { Fbo } from './3d/fbo';
+import { ConstraintGround } from './3d/ground';
+import { ConstraintLights } from './3d/lights';
+import { ConstraintLines } from './3d/lines';
+import { ConstraintNodes } from './3d/nodes';
+import { createSettings } from './core/settings';
 
 var BLACK = new THREE.Color(0x222222);
 var WHITE = new THREE.Color(0xeeeeee);

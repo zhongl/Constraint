@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "types": ["vite/client"]
   },
-  "include": ["src", "vite.config.mjs"]
+  "include": ["src", "packages/effect/src", "vite.config.mjs"]
 }

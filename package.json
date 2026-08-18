@@ -6,6 +6,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@constraint/effect": "workspace:*",
     "glsl-noise": "^0.0.0",
     "glsl-random": "^0.0.5",
     "lil-gui": "^0.21.0",
