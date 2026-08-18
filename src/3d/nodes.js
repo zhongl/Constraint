@@ -47,7 +47,7 @@ export function init() {
 
 }
 
-export function update(dt) {
+export function update() {
 
     mesh.visible = settings.useWhiteNodes;
 

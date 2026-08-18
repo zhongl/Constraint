@@ -121,7 +121,7 @@ export function init(renderer) {
 
 }
 
-function _updateVelocity(dt) {
+function _updateVelocity() {
 
     // swap
     var tmp = _velocityRenderTarget;
@@ -137,7 +137,7 @@ function _updateVelocity(dt) {
     _renderer.setRenderTarget( null );
 }
 
-function _updatePosition(dt) {
+function _updatePosition() {
 
     // swap
     var tmp = _positionRenderTarget;

@@ -1,4 +1,3 @@
-import settings from '../core/settings';
 import * as THREE from 'three';
 import shaderParse from '../helpers/shaderParse';
 import vignetteVert from '../glsl/vignette.vert';

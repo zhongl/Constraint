@@ -1,10 +1,7 @@
-import settings from '../core/settings';
 import * as THREE from 'three';
 
 export var mesh;
 export var spot;
-
-var _moveTime = 0;
 
 export function init() {
 
@@ -45,10 +42,4 @@ export function init() {
 
 }
 
-export function update(dt, camera) {
-    _moveTime += 0;//dt * settings.lightSpeed;
-    var angle = _moveTime * 0.0005 - 0.2;
-    // mesh.position.x = Math.cos(angle) * 400;
-    // mesh.position.z = Math.sin(angle) * 400;
-
-}
+export function update() {}

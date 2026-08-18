@@ -77,7 +77,7 @@ export function init() {
 
 }
 
-export function update(dt) {
+export function update() {
 
     var positionTexture = fbo.positionRenderTarget.texture;
     _material.uniforms.texturePosition.value = positionTexture;
