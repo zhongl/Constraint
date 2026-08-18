@@ -1,5 +1,5 @@
 import settings from '../core/settings';
-import THREE from 'three';
+import * as THREE from 'three';
 
 export var mesh;
 export var spot;

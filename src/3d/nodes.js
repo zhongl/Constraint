@@ -1,5 +1,5 @@
 import settings from '../core/settings';
-import THREE from 'three';
+import * as THREE from 'three';
 import shaderParse from '../helpers/shaderParse';
 import nodeVert from '../glsl/node.vert';
 import nodeFrag from '../glsl/node.frag';

@@ -1,9 +1,8 @@
 import GUI from 'lil-gui';
 // import Stats from 'stats.js';
 import css from 'dom-css';
-import THREE from 'three';
-
-import OrbitControls from './controls/OrbitControls';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import settings from './core/settings';
 
 import * as fbo from './3d/fbo';

@@ -1,5 +1,5 @@
 import settings from '../core/settings';
-import THREE from 'three';
+import * as THREE from 'three';
 import shaderParse from '../helpers/shaderParse';
 import fboVert from '../glsl/fbo.vert';
 import fboThroughFrag from '../glsl/fboThrough.frag';
