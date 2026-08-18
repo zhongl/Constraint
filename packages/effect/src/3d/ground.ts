@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import type { ConstraintSettings } from '../core/settings';
 
-var BLACK = new THREE.Color(0x111111);
-var WHITE = new THREE.Color(0xcccccc);
+const BLACK = new THREE.Color(0x111111);
+const WHITE = new THREE.Color(0xcccccc);
 
 export class ConstraintGround {
     mesh!: THREE.Mesh;
@@ -15,7 +15,7 @@ export class ConstraintGround {
     }
 
     init() {
-        var geometry = new THREE.PlaneGeometry(4000, 4000, 10, 10);
+        const geometry = new THREE.PlaneGeometry(4000, 4000, 10, 10);
         this._material = new THREE.MeshPhongMaterial({
             color: new THREE.Color(),
             transparent: true,

@@ -6,8 +6,8 @@ import { ConstraintLines } from './3d/lines';
 import { ConstraintNodes } from './3d/nodes';
 import { createSettings } from './core/settings';
 
-var BLACK = new THREE.Color(0x222222);
-var WHITE = new THREE.Color(0xeeeeee);
+const BLACK = new THREE.Color(0x222222);
+const WHITE = new THREE.Color(0xeeeeee);
 
 export class ConstraintEffect {
     private readonly _renderer: THREE.WebGLRenderer;
@@ -64,8 +64,8 @@ export class ConstraintEffect {
         this._settings.mouse3d = new THREE.Vector3();
         this._settings.ignoredMaterial = new THREE.Material();
 
-        var settings = this._settings;
-        var fn = this._renderer.renderBufferDirect;
+        const settings = this._settings;
+        const fn = this._renderer.renderBufferDirect;
         this._originalRenderBufferDirect = fn;
         this._renderer.renderBufferDirect = function(camera, scene, geometry, material, object, group) {
             if (material !== settings.ignoredMaterial) {

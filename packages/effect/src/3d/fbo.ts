@@ -38,10 +38,10 @@ export class Fbo {
     init(renderer: THREE.WebGLRenderer) {
         this._renderer = renderer;
 
-        var gl = this._renderer.getContext();
+        const gl = this._renderer.getContext();
         if ( !gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) ) return false;
 
-        var isWebGL2 = typeof WebGL2RenderingContext !== 'undefined' &&
+        const isWebGL2 = typeof WebGL2RenderingContext !== 'undefined' &&
             gl instanceof WebGL2RenderingContext;
         if ( !isWebGL2 && !gl.getExtension( 'OES_texture_float' )) return false;
         if ( !gl.getExtension(isWebGL2 ? 'EXT_color_buffer_float' : 'WEBGL_color_buffer_float') ) return false;
@@ -112,14 +112,14 @@ export class Fbo {
     update(dt: number) {
         this._time += dt;
 
-        var mouse3dUniformValue = this._velocityShader.uniforms.mouse3d.value;
+        const mouse3dUniformValue = this._velocityShader.uniforms.mouse3d!.value;
         if (this._settings.followMouse) {
             mouse3dUniformValue.copy(this._settings.mouse3d);
         } else {
             mouse3dUniformValue.set(0.0, 0.0, -9999);
         }
 
-        this._velocityShader.uniforms.constraintRatio.value = this._settings.constraintRatio;
+        this._velocityShader.uniforms.constraintRatio!.value = this._settings.constraintRatio;
         this._updateVelocity();
         this._updatePosition();
 
@@ -154,28 +154,28 @@ export class Fbo {
     }
 
     private _updateVelocity() {
-        var tmp = this._velocityRenderTarget;
+        const tmp = this._velocityRenderTarget;
         this._velocityRenderTarget = this._velocityRenderTarget2;
         this._velocityRenderTarget2 = tmp;
 
         this._fboMesh.material = this._velocityShader;
-        this._velocityShader.uniforms.time.value = this._time;
-        this._velocityShader.uniforms.textureVelocity.value = this._velocityRenderTarget2.texture;
-        this._velocityShader.uniforms.texturePosition.value = this._positionRenderTarget.texture;
+        this._velocityShader.uniforms.time!.value = this._time;
+        this._velocityShader.uniforms.textureVelocity!.value = this._velocityRenderTarget2.texture;
+        this._velocityShader.uniforms.texturePosition!.value = this._positionRenderTarget.texture;
         this._renderer.setRenderTarget(this._velocityRenderTarget);
         this._renderer.render(this._fboScene, this._fboCamera);
         this._renderer.setRenderTarget(null);
     }
 
     private _updatePosition() {
-        var tmp = this._positionRenderTarget;
+        const tmp = this._positionRenderTarget;
         this._positionRenderTarget = this._positionRenderTarget2;
         this._positionRenderTarget2 = tmp;
 
         this._fboMesh.material = this._positionShader;
-        this._positionShader.uniforms.time.value = this._time;
-        this._positionShader.uniforms.textureVelocity.value = this._velocityRenderTarget.texture;
-        this._positionShader.uniforms.texturePosition.value = this._positionRenderTarget2.texture;
+        this._positionShader.uniforms.time!.value = this._time;
+        this._positionShader.uniforms.textureVelocity!.value = this._velocityRenderTarget.texture;
+        this._positionShader.uniforms.texturePosition!.value = this._positionRenderTarget2.texture;
         this._renderer.setRenderTarget(this._positionRenderTarget);
         this._renderer.render(this._fboScene, this._fboCamera);
         this._renderer.setRenderTarget(null);
@@ -183,21 +183,21 @@ export class Fbo {
 
     private _copyTexture(input: THREE.Texture, output: THREE.WebGLRenderTarget) {
         this._fboMesh.material = this._copyShader;
-        this._copyShader.uniforms.inputTexture.value = input;
+        this._copyShader.uniforms.inputTexture!.value = input;
         this._renderer.setRenderTarget(output);
         this._renderer.render(this._fboScene, this._fboCamera);
         this._renderer.setRenderTarget(null);
     }
 
     private _createVelocityTexture() {
-        var a = new Float32Array(this.amount * 4);
-        for (var i = 0, len = a.length; i < len; i += 4) {
+        const a = new Float32Array(this.amount * 4);
+        for (let i = 0, len = a.length; i < len; i += 4) {
             a[i] = 0;
             a[i + 1] = 0;
             a[i + 2] = 0;
             a[i + 3] = ((~~(i / 4) % this.textureSize) + 1) % this.textureSize;
         }
-        var texture = new THREE.DataTexture(a, this.textureSize, this.textureSize, THREE.RGBAFormat, THREE.FloatType);
+        const texture = new THREE.DataTexture(a, this.textureSize, this.textureSize, THREE.RGBAFormat, THREE.FloatType);
         texture.minFilter = THREE.NearestFilter;
         texture.magFilter = THREE.NearestFilter;
         texture.needsUpdate = true;
@@ -207,13 +207,13 @@ export class Fbo {
     }
 
     private _createPositionTexture() {
-        var a = new Float32Array(this.amount * 4);
-        for (var i = 0, len = a.length; i < len; i += 4) {
+        const a = new Float32Array(this.amount * 4);
+        for (let i = 0, len = a.length; i < len; i += 4) {
             a[i] = (Math.random() - 0.5) * 1;
             a[i + 1] = (Math.random() - 0.5) * 1;
             a[i + 2] = (Math.random() - 0.5) * 1;
         }
-        var texture = new THREE.DataTexture(a, this.textureSize, this.textureSize, THREE.RGBAFormat, THREE.FloatType);
+        const texture = new THREE.DataTexture(a, this.textureSize, this.textureSize, THREE.RGBAFormat, THREE.FloatType);
         texture.minFilter = THREE.NearestFilter;
         texture.magFilter = THREE.NearestFilter;
         texture.needsUpdate = true;
