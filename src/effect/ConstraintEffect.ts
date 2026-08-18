@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { Fbo } from '../3d/fbo';
 import * as ground from '../3d/ground';
 import * as lights from '../3d/lights';
-import * as lines from '../3d/lines';
+import { ConstraintLines } from '../3d/lines';
 import * as nodes from '../3d/nodes';
 import { createSettings } from '../core/settings';
 
@@ -15,6 +15,7 @@ export class ConstraintEffect {
     private readonly _fog = new THREE.FogExp2(0x222222, 0.001);
     private readonly _settings = createSettings();
     private readonly _fbo = new Fbo(this._settings);
+    private _lines!: ConstraintLines;
     private readonly _skybox: THREE.Mesh;
 
     constructor(renderer: THREE.WebGLRenderer, scene: THREE.Scene) {
@@ -74,8 +75,9 @@ export class ConstraintEffect {
         lights.init();
         this._scene.add(lights.mesh);
 
-        lines.init(this._settings, this._fbo);
-        this._scene.add(lines.mesh);
+        this._lines = new ConstraintLines(this._settings, this._fbo);
+        this._lines.init();
+        this._scene.add(this._lines.mesh);
 
         nodes.init(this._settings, this._fbo);
         this._scene.add(nodes.mesh);
@@ -105,7 +107,7 @@ export class ConstraintEffect {
 
         lights.update(dt, camera);
         this._fbo.update(dt);
-        lines.update(dt);
+        this._lines.update();
         nodes.update(dt);
         ground.update();
     }

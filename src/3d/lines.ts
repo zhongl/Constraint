@@ -1,92 +1,91 @@
-import type { ConstraintSettings } from '../core/settings';
 import * as THREE from 'three';
+import type { ConstraintSettings } from '../core/settings';
 import shaderParse from '../helpers/shaderParse';
 import linesVert from '../glsl/lines.vert';
 import linesFrag from '../glsl/lines.frag';
 import lineDepthVert from '../glsl/lineDepth.vert';
 import lineDepthFrag from '../glsl/lineDepth.frag';
-
 import type { Fbo } from './fbo';
 import * as math from '../utils/math';
 
-export var mesh: THREE.LineSegments;
+export class ConstraintLines {
+    mesh!: THREE.LineSegments;
 
-var _geometry: THREE.BufferGeometry;
-var _material: THREE.ShaderMaterial;
-var _settings: ConstraintSettings;
-var _fbo: Fbo;
-var _depthMaterial: THREE.ShaderMaterial;
+    private readonly _settings: ConstraintSettings;
+    private readonly _fbo: Fbo;
+    private _material!: THREE.ShaderMaterial;
+    private _depthMaterial!: THREE.ShaderMaterial;
 
-export function init(settings: ConstraintSettings, fbo: Fbo) {
-
-    _settings = settings;
-    _fbo = fbo;
-    var PARTICLE_AMOUNT = _fbo.amount;
-    var TEXTURE_SIZE = _fbo.textureSize;
-    var LINE_AMOUNT = _settings.lineAmount;
-
-    // use position x, y for the pointA fboUv and z for line side
-    var positions = new Float32Array(LINE_AMOUNT * 2 * 3);
-    var oppositeUv = new Float32Array(LINE_AMOUNT * 2 * 2);
-
-    var i4, i6, indexA, indexB;
-    for(var i = 0; i < LINE_AMOUNT; ++i ) {
-        i4 = i * 4;
-        i6 = i * 6;
-        indexA = i %  PARTICLE_AMOUNT;
-        positions[i6 + 0] = oppositeUv[ i4 + 2] = (indexA % TEXTURE_SIZE) / TEXTURE_SIZE;
-        positions[i6 + 1] = oppositeUv[ i4 + 3] = ~~(indexA / TEXTURE_SIZE) / TEXTURE_SIZE;
-        positions[i6 + 2] = -1;
-
-        indexB = ~~(math.hash(i * 100.0) * PARTICLE_AMOUNT);
-        if(indexB === indexA) indexB = ( indexB + 1 ) % PARTICLE_AMOUNT;
-        positions[i6 + 3] = oppositeUv[ i4 + 0] = (indexB % TEXTURE_SIZE) / TEXTURE_SIZE;
-        positions[i6 + 4] = oppositeUv[ i4 + 1] = ~~(indexB / TEXTURE_SIZE) / TEXTURE_SIZE;
-        positions[i6 + 5] = 1;
+    constructor(settings: ConstraintSettings, fbo: Fbo) {
+        this._settings = settings;
+        this._fbo = fbo;
     }
-    _geometry = new THREE.BufferGeometry();
-    _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
-    _geometry.setAttribute( 'oppositeUv', new THREE.BufferAttribute( oppositeUv, 2 ));
-    _material = new THREE.ShaderMaterial( {
-        uniforms: THREE.UniformsUtils.merge( [
-            THREE.UniformsLib.fog,
-            THREE.UniformsLib.lights, {
-            texturePosition: { value: null },
-            whiteNodesRatio: { value: 1 },
-            whiteRatio: { value: 1 }
-        }]),
-        vertexShader: shaderParse(linesVert),
-        fragmentShader: shaderParse(linesFrag),
-        linewidth: 1,
-        blending: THREE.NoBlending,
-        lights: true,
-        fog: true
-    });
 
-    _depthMaterial = new THREE.ShaderMaterial( {
-        uniforms: {
-            texturePosition: { value: null },
-        },
-        vertexShader: shaderParse(lineDepthVert),
-        fragmentShader: shaderParse(lineDepthFrag),
-        depthTest: true,
-        depthWrite: true
-    });
+    init() {
+        var particleAmount = this._fbo.amount;
+        var textureSize = this._fbo.textureSize;
+        var lineAmount = this._settings.lineAmount;
 
-    mesh = new THREE.LineSegments(_geometry, _material);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    mesh.frustumCulled = false;
-    mesh.customDepthMaterial = _depthMaterial;
+        var positions = new Float32Array(lineAmount * 2 * 3);
+        var oppositeUv = new Float32Array(lineAmount * 2 * 2);
 
-}
+        var i4, i6, indexA, indexB;
+        for(var i = 0; i < lineAmount; ++i ) {
+            i4 = i * 4;
+            i6 = i * 6;
+            indexA = i % particleAmount;
+            positions[i6] = oppositeUv[i4 + 2] = (indexA % textureSize) / textureSize;
+            positions[i6 + 1] = oppositeUv[i4 + 3] = ~~(indexA / textureSize) / textureSize;
+            positions[i6 + 2] = -1;
 
-export function update(_dt: number) {
+            indexB = ~~(math.hash(i * 100.0) * particleAmount);
+            if(indexB === indexA) indexB = (indexB + 1) % particleAmount;
+            positions[i6 + 3] = oppositeUv[i4] = (indexB % textureSize) / textureSize;
+            positions[i6 + 4] = oppositeUv[i4 + 1] = ~~(indexB / textureSize) / textureSize;
+            positions[i6 + 5] = 1;
+        }
 
-    var positionTexture = _fbo.positionRenderTarget.texture;
-    _material.uniforms.texturePosition.value = positionTexture;
-    _depthMaterial.uniforms.texturePosition.value = positionTexture;
-    _material.uniforms.whiteNodesRatio.value = _settings.whiteNodesRatio;
-    _material.uniforms.whiteRatio.value = _settings.whiteRatio;
+        var geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('oppositeUv', new THREE.BufferAttribute(oppositeUv, 2));
+        this._material = new THREE.ShaderMaterial({
+            uniforms: THREE.UniformsUtils.merge([
+                THREE.UniformsLib.fog,
+                THREE.UniformsLib.lights, {
+                texturePosition: { value: null },
+                whiteNodesRatio: { value: 1 },
+                whiteRatio: { value: 1 }
+            }]),
+            vertexShader: shaderParse(linesVert),
+            fragmentShader: shaderParse(linesFrag),
+            linewidth: 1,
+            blending: THREE.NoBlending,
+            lights: true,
+            fog: true
+        });
 
+        this._depthMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                texturePosition: { value: null },
+            },
+            vertexShader: shaderParse(lineDepthVert),
+            fragmentShader: shaderParse(lineDepthFrag),
+            depthTest: true,
+            depthWrite: true
+        });
+
+        this.mesh = new THREE.LineSegments(geometry, this._material);
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
+        this.mesh.frustumCulled = false;
+        this.mesh.customDepthMaterial = this._depthMaterial;
+    }
+
+    update() {
+        var positionTexture = this._fbo.positionRenderTarget.texture;
+        this._material.uniforms.texturePosition.value = positionTexture;
+        this._depthMaterial.uniforms.texturePosition.value = positionTexture;
+        this._material.uniforms.whiteNodesRatio.value = this._settings.whiteNodesRatio;
+        this._material.uniforms.whiteRatio.value = this._settings.whiteRatio;
+    }
 }
