@@ -16,7 +16,6 @@ import * as math from './utils/math';
 var raf = window.requestAnimationFrame.bind(window);
 
 
-var undef;
 var _gui;
 var _stats;
 
@@ -29,7 +28,6 @@ var _scene;
 var _renderer;
 var _skybox;
 
-var _isDown = false;
 var _time = 0;
 var _ray = new THREE.Ray();
 
@@ -161,7 +159,6 @@ function _bindTouch(func) {
 }
 
 function _onDown(evt) {
-    _isDown = true;
     _onMove(evt);
 }
 
@@ -173,7 +170,6 @@ function _onMove(evt) {
 }
 
 function _onUp() {
-    _isDown = false;
 }
 
 function _onResize() {
@@ -190,12 +186,12 @@ function _loop() {
     var newTime = Date.now();
     raf(_loop);
     if(settings.useStats) _stats.begin();
-    _render(newTime - _time, newTime);
+    _render(newTime - _time);
     if(settings.useStats) _stats.end();
     _time = newTime;
 }
 
-function _render(dt, newTime) {
+function _render(dt) {
 
     settings.whiteRatio += ((settings.isWhite ? 1 : 0) - settings.whiteRatio) * 0.2;
     settings.whiteNodesRatio += ((settings.useWhiteNodes ? 1 : 0) - settings.whiteNodesRatio) * 0.1;
