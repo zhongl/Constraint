@@ -1,4 +1,4 @@
-import settings from '../core/settings';
+import type { ConstraintSettings } from '../core/settings';
 import * as THREE from 'three';
 import shaderParse from '../helpers/shaderParse';
 import linesVert from '../glsl/lines.vert';
@@ -13,13 +13,15 @@ export var mesh: THREE.LineSegments;
 
 var _geometry: THREE.BufferGeometry;
 var _material: THREE.ShaderMaterial;
+var _settings: ConstraintSettings;
 var _depthMaterial: THREE.ShaderMaterial;
 
-export function init() {
+export function init(settings: ConstraintSettings) {
 
+    _settings = settings;
     var PARTICLE_AMOUNT = fbo.AMOUNT;
     var TEXTURE_SIZE = fbo.TEXTURE_SIZE;
-    var LINE_AMOUNT = settings.lineAmount;
+    var LINE_AMOUNT = _settings.lineAmount;
 
     // use position x, y for the pointA fboUv and z for line side
     var positions = new Float32Array(LINE_AMOUNT * 2 * 3);
@@ -82,7 +84,7 @@ export function update(_dt: number) {
     var positionTexture = fbo.positionRenderTarget.texture;
     _material.uniforms.texturePosition.value = positionTexture;
     _depthMaterial.uniforms.texturePosition.value = positionTexture;
-    _material.uniforms.whiteNodesRatio.value = settings.whiteNodesRatio;
-    _material.uniforms.whiteRatio.value = settings.whiteRatio;
+    _material.uniforms.whiteNodesRatio.value = _settings.whiteNodesRatio;
+    _material.uniforms.whiteRatio.value = _settings.whiteRatio;
 
 }

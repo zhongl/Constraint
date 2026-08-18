@@ -1,4 +1,4 @@
-import settings from '../core/settings';
+import type { ConstraintSettings } from '../core/settings';
 import * as THREE from 'three';
 import shaderParse from '../helpers/shaderParse';
 import nodeVert from '../glsl/node.vert';
@@ -11,9 +11,11 @@ export var mesh: THREE.Points;
 
 var _geometry: THREE.BufferGeometry;
 var _material: THREE.ShaderMaterial;
+var _settings: ConstraintSettings;
 
-export function init() {
+export function init(settings: ConstraintSettings) {
 
+    _settings = settings;
     var PARTICLE_AMOUNT = fbo.AMOUNT;
     var TEXTURE_SIZE = fbo.TEXTURE_SIZE;
 
@@ -49,10 +51,10 @@ export function init() {
 
 export function update(_dt: number) {
 
-    mesh.visible = settings.useWhiteNodes;
+    mesh.visible = _settings.useWhiteNodes;
 
     var positionTexture = fbo.positionRenderTarget.texture;
     _material.uniforms.texturePosition.value = positionTexture;
-    _material.uniforms.alpha.value = 1 - settings.whiteRatio * 0.9;
+    _material.uniforms.alpha.value = 1 - _settings.whiteRatio * 0.9;
 
 }

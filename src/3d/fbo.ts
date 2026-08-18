@@ -1,4 +1,4 @@
-import settings from '../core/settings';
+import type { ConstraintSettings } from '../core/settings';
 import * as THREE from 'three';
 import shaderParse from '../helpers/shaderParse';
 import fboVert from '../glsl/fbo.vert';
@@ -15,20 +15,24 @@ var _positionRenderTarget: THREE.WebGLRenderTarget;
 var _positionRenderTarget2: THREE.WebGLRenderTarget;
 
 var _renderer: THREE.WebGLRenderer;
+var _settings: ConstraintSettings;
 var _fboMesh: THREE.Mesh;
 var _fboScene: THREE.Scene;
 var _fboCamera: THREE.Camera;
 var _time = 0;
 
-export var TEXTURE_SIZE = settings.textureSize;
-export var AMOUNT = TEXTURE_SIZE * TEXTURE_SIZE;
+export var TEXTURE_SIZE: number;
+export var AMOUNT: number;
 
 export var positionRenderTarget: THREE.WebGLRenderTarget;
 export var prevPositionRenderTarget: THREE.WebGLRenderTarget;
 
-export function init(renderer: THREE.WebGLRenderer) {
+export function init(renderer: THREE.WebGLRenderer, settings: ConstraintSettings) {
 
     _renderer = renderer;
+    _settings = settings;
+    TEXTURE_SIZE = _settings.textureSize;
+    AMOUNT = TEXTURE_SIZE * TEXTURE_SIZE;
 
     var gl = _renderer.getContext();
     if ( !gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) ) {
@@ -62,7 +66,7 @@ export function init(renderer: THREE.WebGLRenderer) {
             mouse3d: { value: new THREE.Vector3() },
             texturePosition: { value: null },
             textureVelocity: { value: null },
-            constraintRatio: { value: settings.constraintRatio },
+            constraintRatio: { value: _settings.constraintRatio },
             time: { value: 0 },
         },
         vertexShader: shaderParse(fboVert),
@@ -205,13 +209,13 @@ export function update(dt: number) {
     _time += dt;
 
     var mouse3dUniformValue = _velocityShader.uniforms.mouse3d.value;
-    if(settings.followMouse) {
-        mouse3dUniformValue.copy(settings.mouse3d);
+    if(_settings.followMouse) {
+        mouse3dUniformValue.copy(_settings.mouse3d);
     } else {
         mouse3dUniformValue.set(0.0, 0.0, -9999);
     }
 
-    _velocityShader.uniforms.constraintRatio.value = settings.constraintRatio;
+    _velocityShader.uniforms.constraintRatio.value = _settings.constraintRatio;
 
     _updateVelocity(dt);
 

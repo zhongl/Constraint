@@ -1,15 +1,17 @@
-import settings from '../core/settings';
+import type { ConstraintSettings } from '../core/settings';
 import * as THREE from 'three';
 
 export var mesh: THREE.Mesh;
 
 var _geometry: THREE.PlaneGeometry;
 var _material: THREE.MeshPhongMaterial;
+var _settings: ConstraintSettings;
 
 var BLACK = new THREE.Color(0x111111);
 var WHITE = new THREE.Color(0xcccccc);
 
-export function init(_renderer: THREE.WebGLRenderer) {
+export function init(_renderer: THREE.WebGLRenderer, settings: ConstraintSettings) {
+    _settings = settings;
     _geometry = new THREE.PlaneGeometry( 4000, 4000, 10, 10 );
     _material = new THREE.MeshPhongMaterial( {
         color: new THREE.Color(),
@@ -28,5 +30,5 @@ export function init(_renderer: THREE.WebGLRenderer) {
 
 export function update() {
     mesh.visible = true;
-    _material.color.copy(BLACK).lerp(WHITE, settings.whiteRatio);
+    _material.color.copy(BLACK).lerp(WHITE, _settings.whiteRatio);
 }
