@@ -4,7 +4,7 @@ import shaderParse from '../helpers/shaderParse';
 import nodeVert from '../glsl/node.vert';
 import nodeFrag from '../glsl/node.frag';
 
-import * as fbo from './fbo';
+import type { Fbo } from './fbo';
 import * as math from '../utils/math';
 
 export var mesh: THREE.Points;
@@ -12,12 +12,14 @@ export var mesh: THREE.Points;
 var _geometry: THREE.BufferGeometry;
 var _material: THREE.ShaderMaterial;
 var _settings: ConstraintSettings;
+var _fbo: Fbo;
 
-export function init(settings: ConstraintSettings) {
+export function init(settings: ConstraintSettings, fbo: Fbo) {
 
     _settings = settings;
-    var PARTICLE_AMOUNT = fbo.AMOUNT;
-    var TEXTURE_SIZE = fbo.TEXTURE_SIZE;
+    _fbo = fbo;
+    var PARTICLE_AMOUNT = _fbo.amount;
+    var TEXTURE_SIZE = _fbo.textureSize;
 
     // use position x, y for the point
     var positions = new Float32Array(PARTICLE_AMOUNT  * 3);
@@ -53,7 +55,7 @@ export function update(_dt: number) {
 
     mesh.visible = _settings.useWhiteNodes;
 
-    var positionTexture = fbo.positionRenderTarget.texture;
+    var positionTexture = _fbo.positionRenderTarget.texture;
     _material.uniforms.texturePosition.value = positionTexture;
     _material.uniforms.alpha.value = 1 - _settings.whiteRatio * 0.9;
 

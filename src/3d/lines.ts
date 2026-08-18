@@ -6,7 +6,7 @@ import linesFrag from '../glsl/lines.frag';
 import lineDepthVert from '../glsl/lineDepth.vert';
 import lineDepthFrag from '../glsl/lineDepth.frag';
 
-import * as fbo from './fbo';
+import type { Fbo } from './fbo';
 import * as math from '../utils/math';
 
 export var mesh: THREE.LineSegments;
@@ -14,13 +14,15 @@ export var mesh: THREE.LineSegments;
 var _geometry: THREE.BufferGeometry;
 var _material: THREE.ShaderMaterial;
 var _settings: ConstraintSettings;
+var _fbo: Fbo;
 var _depthMaterial: THREE.ShaderMaterial;
 
-export function init(settings: ConstraintSettings) {
+export function init(settings: ConstraintSettings, fbo: Fbo) {
 
     _settings = settings;
-    var PARTICLE_AMOUNT = fbo.AMOUNT;
-    var TEXTURE_SIZE = fbo.TEXTURE_SIZE;
+    _fbo = fbo;
+    var PARTICLE_AMOUNT = _fbo.amount;
+    var TEXTURE_SIZE = _fbo.textureSize;
     var LINE_AMOUNT = _settings.lineAmount;
 
     // use position x, y for the pointA fboUv and z for line side
@@ -81,7 +83,7 @@ export function init(settings: ConstraintSettings) {
 
 export function update(_dt: number) {
 
-    var positionTexture = fbo.positionRenderTarget.texture;
+    var positionTexture = _fbo.positionRenderTarget.texture;
     _material.uniforms.texturePosition.value = positionTexture;
     _depthMaterial.uniforms.texturePosition.value = positionTexture;
     _material.uniforms.whiteNodesRatio.value = _settings.whiteNodesRatio;

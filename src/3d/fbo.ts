@@ -1,228 +1,207 @@
-import type { ConstraintSettings } from '../core/settings';
 import * as THREE from 'three';
+import type { ConstraintSettings } from '../core/settings';
 import shaderParse from '../helpers/shaderParse';
 import fboVert from '../glsl/fbo.vert';
 import fboThroughFrag from '../glsl/fboThrough.frag';
 import velocityFrag from '../glsl/velocity.frag';
 import positionFrag from '../glsl/position.frag';
 
-var _copyShader: THREE.ShaderMaterial;
-var _velocityShader: THREE.ShaderMaterial;
-var _positionShader: THREE.ShaderMaterial;
-var _velocityRenderTarget: THREE.WebGLRenderTarget;
-var _velocityRenderTarget2: THREE.WebGLRenderTarget;
-var _positionRenderTarget: THREE.WebGLRenderTarget;
-var _positionRenderTarget2: THREE.WebGLRenderTarget;
+export class Fbo {
+    readonly textureSize: number;
+    readonly amount: number;
 
-var _renderer: THREE.WebGLRenderer;
-var _settings: ConstraintSettings;
-var _fboMesh: THREE.Mesh;
-var _fboScene: THREE.Scene;
-var _fboCamera: THREE.Camera;
-var _time = 0;
+    positionRenderTarget!: THREE.WebGLRenderTarget;
+    prevPositionRenderTarget!: THREE.WebGLRenderTarget;
 
-export var TEXTURE_SIZE: number;
-export var AMOUNT: number;
+    private readonly _settings: ConstraintSettings;
+    private _copyShader!: THREE.ShaderMaterial;
+    private _velocityShader!: THREE.ShaderMaterial;
+    private _positionShader!: THREE.ShaderMaterial;
+    private _velocityRenderTarget!: THREE.WebGLRenderTarget;
+    private _velocityRenderTarget2!: THREE.WebGLRenderTarget;
+    private _positionRenderTarget!: THREE.WebGLRenderTarget;
+    private _positionRenderTarget2!: THREE.WebGLRenderTarget;
+    private _renderer!: THREE.WebGLRenderer;
+    private _fboMesh!: THREE.Mesh;
+    private _fboScene!: THREE.Scene;
+    private _fboCamera!: THREE.Camera;
+    private _time = 0;
 
-export var positionRenderTarget: THREE.WebGLRenderTarget;
-export var prevPositionRenderTarget: THREE.WebGLRenderTarget;
-
-export function init(renderer: THREE.WebGLRenderer, settings: ConstraintSettings) {
-
-    _renderer = renderer;
-    _settings = settings;
-    TEXTURE_SIZE = _settings.textureSize;
-    AMOUNT = TEXTURE_SIZE * TEXTURE_SIZE;
-
-    var gl = _renderer.getContext();
-    if ( !gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) ) {
-        return false;
-    }
-    var isWebGL2 = typeof WebGL2RenderingContext !== 'undefined' &&
-        gl instanceof WebGL2RenderingContext;
-    if ( !isWebGL2 && !gl.getExtension( 'OES_texture_float' )) {
-        return false;
-    }
-    if ( !gl.getExtension(isWebGL2 ? 'EXT_color_buffer_float' : 'WEBGL_color_buffer_float') ) {
-        return false;
+    constructor(settings: ConstraintSettings) {
+        this._settings = settings;
+        this.textureSize = settings.textureSize;
+        this.amount = this.textureSize * this.textureSize;
     }
 
-    _fboScene = new THREE.Scene();
-    _fboCamera = new THREE.Camera();
-    _fboCamera.position.z = 1;
+    init(renderer: THREE.WebGLRenderer) {
+        this._renderer = renderer;
 
-    _copyShader = new THREE.ShaderMaterial({
-        uniforms: {
-            resolution: { value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
-            inputTexture: { value: null }
-        },
-        vertexShader: shaderParse(fboVert),
-        fragmentShader: shaderParse(fboThroughFrag)
-    });
+        var gl = this._renderer.getContext();
+        if ( !gl.getParameter(gl.MAX_VERTEX_TEXTURE_IMAGE_UNITS) ) return false;
 
-    _velocityShader = new THREE.ShaderMaterial({
-        uniforms: {
-            resolution: { value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
-            mouse3d: { value: new THREE.Vector3() },
-            texturePosition: { value: null },
-            textureVelocity: { value: null },
-            constraintRatio: { value: _settings.constraintRatio },
-            time: { value: 0 },
-        },
-        vertexShader: shaderParse(fboVert),
-        fragmentShader: shaderParse(velocityFrag),
-        blending: THREE.NoBlending,
-        transparent: false,
-        depthWrite: false,
-        depthTest: false
-    });
+        var isWebGL2 = typeof WebGL2RenderingContext !== 'undefined' &&
+            gl instanceof WebGL2RenderingContext;
+        if ( !isWebGL2 && !gl.getExtension( 'OES_texture_float' )) return false;
+        if ( !gl.getExtension(isWebGL2 ? 'EXT_color_buffer_float' : 'WEBGL_color_buffer_float') ) return false;
 
-    _positionShader = new THREE.ShaderMaterial({
-        uniforms: {
-            resolution: { value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
-            texturePosition: { value: null },
-            textureVelocity: { value: null },
-            time: { value: 0 },
-        },
-        vertexShader: shaderParse(fboVert),
-        fragmentShader: shaderParse(positionFrag),
-        blending: THREE.NoBlending,
-        transparent: false,
-        depthWrite: false,
-        depthTest: false
-    });
+        this._fboScene = new THREE.Scene();
+        this._fboCamera = new THREE.Camera();
+        this._fboCamera.position.z = 1;
 
-    _fboMesh = new THREE.Mesh( new THREE.PlaneGeometry( 2, 2 ), _copyShader );
-    _fboScene.add( _fboMesh );
+        this._copyShader = new THREE.ShaderMaterial({
+            uniforms: {
+                resolution: { value: new THREE.Vector2(this.textureSize, this.textureSize) },
+                inputTexture: { value: null }
+            },
+            vertexShader: shaderParse(fboVert),
+            fragmentShader: shaderParse(fboThroughFrag)
+        });
 
-    _velocityRenderTarget = new THREE.WebGLRenderTarget( TEXTURE_SIZE, TEXTURE_SIZE, {
-        wrapS: THREE.RepeatWrapping,
-        wrapT: THREE.RepeatWrapping,
-        minFilter: THREE.NearestFilter,
-        magFilter: THREE.NearestFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.FloatType,
-        depthBuffer: false,
-        stencilBuffer: false
-    });
-    _velocityRenderTarget2 = _velocityRenderTarget.clone();
-    _copyTexture(_createVelocityTexture(), _velocityRenderTarget);
-    _copyTexture(_velocityRenderTarget.texture, _velocityRenderTarget2);
+        this._velocityShader = new THREE.ShaderMaterial({
+            uniforms: {
+                resolution: { value: new THREE.Vector2(this.textureSize, this.textureSize) },
+                mouse3d: { value: new THREE.Vector3() },
+                texturePosition: { value: null },
+                textureVelocity: { value: null },
+                constraintRatio: { value: this._settings.constraintRatio },
+                time: { value: 0 },
+            },
+            vertexShader: shaderParse(fboVert),
+            fragmentShader: shaderParse(velocityFrag),
+            blending: THREE.NoBlending,
+            transparent: false,
+            depthWrite: false,
+            depthTest: false
+        });
 
-    _positionRenderTarget = new THREE.WebGLRenderTarget(TEXTURE_SIZE, TEXTURE_SIZE, {
-        wrapS: THREE.RepeatWrapping,
-        wrapT: THREE.RepeatWrapping,
-        minFilter: THREE.NearestFilter,
-        magFilter: THREE.NearestFilter,
-        format: THREE.RGBAFormat,
-        type: THREE.FloatType,
-        depthBuffer: false,
-        stencilBuffer: false
-    });
-    _positionRenderTarget2 = _positionRenderTarget.clone();
+        this._positionShader = new THREE.ShaderMaterial({
+            uniforms: {
+                resolution: { value: new THREE.Vector2(this.textureSize, this.textureSize) },
+                texturePosition: { value: null },
+                textureVelocity: { value: null },
+                time: { value: 0 },
+            },
+            vertexShader: shaderParse(fboVert),
+            fragmentShader: shaderParse(positionFrag),
+            blending: THREE.NoBlending,
+            transparent: false,
+            depthWrite: false,
+            depthTest: false
+        });
 
-    _copyTexture(_createPositionTexture(), _positionRenderTarget);
-    _copyTexture(_positionRenderTarget.texture, _positionRenderTarget2);
+        this._fboMesh = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this._copyShader);
+        this._fboScene.add(this._fboMesh);
 
-    return true;
-}
+        this._velocityRenderTarget = this._createRenderTarget();
+        this._velocityRenderTarget2 = this._velocityRenderTarget.clone();
+        this._copyTexture(this._createVelocityTexture(), this._velocityRenderTarget);
+        this._copyTexture(this._velocityRenderTarget.texture, this._velocityRenderTarget2);
 
-function _updateVelocity(_dt: number) {
+        this._positionRenderTarget = this._createRenderTarget();
+        this._positionRenderTarget2 = this._positionRenderTarget.clone();
+        this._copyTexture(this._createPositionTexture(), this._positionRenderTarget);
+        this._copyTexture(this._positionRenderTarget.texture, this._positionRenderTarget2);
 
-    // swap
-    var tmp = _velocityRenderTarget;
-    _velocityRenderTarget = _velocityRenderTarget2;
-    _velocityRenderTarget2 = tmp;
-
-    _fboMesh.material = _velocityShader;
-    _velocityShader.uniforms.time.value = _time;
-    _velocityShader.uniforms.textureVelocity.value = _velocityRenderTarget2.texture;
-    _velocityShader.uniforms.texturePosition.value = _positionRenderTarget.texture;
-    _renderer.setRenderTarget( _velocityRenderTarget );
-    _renderer.render( _fboScene, _fboCamera );
-    _renderer.setRenderTarget( null );
-}
-
-function _updatePosition(_dt: number) {
-
-    // swap
-    var tmp = _positionRenderTarget;
-    _positionRenderTarget = _positionRenderTarget2;
-    _positionRenderTarget2 = tmp;
-
-    _fboMesh.material = _positionShader;
-    _positionShader.uniforms.time.value = _time;
-    _positionShader.uniforms.textureVelocity.value = _velocityRenderTarget.texture;
-    _positionShader.uniforms.texturePosition.value = _positionRenderTarget2.texture;
-    _renderer.setRenderTarget( _positionRenderTarget );
-    _renderer.render( _fboScene, _fboCamera );
-    _renderer.setRenderTarget( null );
-}
-
-function _copyTexture(input: THREE.Texture, output: THREE.WebGLRenderTarget) {
-    _fboMesh.material = _copyShader;
-    _copyShader.uniforms.inputTexture.value = input;
-    _renderer.setRenderTarget( output );
-    _renderer.render( _fboScene, _fboCamera );
-    _renderer.setRenderTarget( null );
-}
-
-function _createVelocityTexture() {
-    var a = new Float32Array( AMOUNT * 4 );
-    // vx, vy, vz, gl_FragCoord + 1 % texture_width
-    //
-    for ( var i = 0, len = a.length; i < len; i += 4 ) {
-        a[ i + 0 ] = 0;
-        a[ i + 1 ] = 0;
-        a[ i + 2 ] = 0;
-        a[ i + 3 ] = ((~~(i / 4) % TEXTURE_SIZE) + 1) % TEXTURE_SIZE; // "random" gl_FragCoord x
-    }
-    var texture = new THREE.DataTexture( a, TEXTURE_SIZE, TEXTURE_SIZE, THREE.RGBAFormat, THREE.FloatType );
-    texture.minFilter = THREE.NearestFilter;
-    texture.magFilter = THREE.NearestFilter;
-    texture.needsUpdate = true;
-    texture.generateMipmaps = false;
-    texture.flipY = false;
-    return texture;
-}
-
-
-function _createPositionTexture() {
-    var a = new Float32Array( AMOUNT * 4 );
-    // x, y, z
-    for ( var i = 0, len = a.length; i < len; i += 4 ) {
-        a[ i + 0 ] = (Math.random() - 0.5) * 1;
-        a[ i + 1 ] = (Math.random() - 0.5) * 1;
-        a[ i + 2 ] = (Math.random() - 0.5) * 1;
-    }
-    var texture = new THREE.DataTexture( a, TEXTURE_SIZE, TEXTURE_SIZE, THREE.RGBAFormat, THREE.FloatType );
-    texture.minFilter = THREE.NearestFilter;
-    texture.magFilter = THREE.NearestFilter;
-    texture.needsUpdate = true;
-    texture.generateMipmaps = false;
-    texture.flipY = false;
-    return texture;
-}
-
-export function update(dt: number) {
-
-    _time += dt;
-
-    var mouse3dUniformValue = _velocityShader.uniforms.mouse3d.value;
-    if(_settings.followMouse) {
-        mouse3dUniformValue.copy(_settings.mouse3d);
-    } else {
-        mouse3dUniformValue.set(0.0, 0.0, -9999);
+        return true;
     }
 
-    _velocityShader.uniforms.constraintRatio.value = _settings.constraintRatio;
+    update(dt: number) {
+        this._time += dt;
 
-    _updateVelocity(dt);
+        var mouse3dUniformValue = this._velocityShader.uniforms.mouse3d.value;
+        if (this._settings.followMouse) {
+            mouse3dUniformValue.copy(this._settings.mouse3d);
+        } else {
+            mouse3dUniformValue.set(0.0, 0.0, -9999);
+        }
 
-    _updatePosition(dt);
+        this._velocityShader.uniforms.constraintRatio.value = this._settings.constraintRatio;
+        this._updateVelocity();
+        this._updatePosition();
 
-    positionRenderTarget = _positionRenderTarget;
-    prevPositionRenderTarget = _positionRenderTarget2;
+        this.positionRenderTarget = this._positionRenderTarget;
+        this.prevPositionRenderTarget = this._positionRenderTarget2;
+    }
+
+    private _createRenderTarget() {
+        return new THREE.WebGLRenderTarget(this.textureSize, this.textureSize, {
+            wrapS: THREE.RepeatWrapping,
+            wrapT: THREE.RepeatWrapping,
+            minFilter: THREE.NearestFilter,
+            magFilter: THREE.NearestFilter,
+            format: THREE.RGBAFormat,
+            type: THREE.FloatType,
+            depthBuffer: false,
+            stencilBuffer: false
+        });
+    }
+
+    private _updateVelocity() {
+        var tmp = this._velocityRenderTarget;
+        this._velocityRenderTarget = this._velocityRenderTarget2;
+        this._velocityRenderTarget2 = tmp;
+
+        this._fboMesh.material = this._velocityShader;
+        this._velocityShader.uniforms.time.value = this._time;
+        this._velocityShader.uniforms.textureVelocity.value = this._velocityRenderTarget2.texture;
+        this._velocityShader.uniforms.texturePosition.value = this._positionRenderTarget.texture;
+        this._renderer.setRenderTarget(this._velocityRenderTarget);
+        this._renderer.render(this._fboScene, this._fboCamera);
+        this._renderer.setRenderTarget(null);
+    }
+
+    private _updatePosition() {
+        var tmp = this._positionRenderTarget;
+        this._positionRenderTarget = this._positionRenderTarget2;
+        this._positionRenderTarget2 = tmp;
+
+        this._fboMesh.material = this._positionShader;
+        this._positionShader.uniforms.time.value = this._time;
+        this._positionShader.uniforms.textureVelocity.value = this._velocityRenderTarget.texture;
+        this._positionShader.uniforms.texturePosition.value = this._positionRenderTarget2.texture;
+        this._renderer.setRenderTarget(this._positionRenderTarget);
+        this._renderer.render(this._fboScene, this._fboCamera);
+        this._renderer.setRenderTarget(null);
+    }
+
+    private _copyTexture(input: THREE.Texture, output: THREE.WebGLRenderTarget) {
+        this._fboMesh.material = this._copyShader;
+        this._copyShader.uniforms.inputTexture.value = input;
+        this._renderer.setRenderTarget(output);
+        this._renderer.render(this._fboScene, this._fboCamera);
+        this._renderer.setRenderTarget(null);
+    }
+
+    private _createVelocityTexture() {
+        var a = new Float32Array(this.amount * 4);
+        for (var i = 0, len = a.length; i < len; i += 4) {
+            a[i] = 0;
+            a[i + 1] = 0;
+            a[i + 2] = 0;
+            a[i + 3] = ((~~(i / 4) % this.textureSize) + 1) % this.textureSize;
+        }
+        var texture = new THREE.DataTexture(a, this.textureSize, this.textureSize, THREE.RGBAFormat, THREE.FloatType);
+        texture.minFilter = THREE.NearestFilter;
+        texture.magFilter = THREE.NearestFilter;
+        texture.needsUpdate = true;
+        texture.generateMipmaps = false;
+        texture.flipY = false;
+        return texture;
+    }
+
+    private _createPositionTexture() {
+        var a = new Float32Array(this.amount * 4);
+        for (var i = 0, len = a.length; i < len; i += 4) {
+            a[i] = (Math.random() - 0.5) * 1;
+            a[i + 1] = (Math.random() - 0.5) * 1;
+            a[i + 2] = (Math.random() - 0.5) * 1;
+        }
+        var texture = new THREE.DataTexture(a, this.textureSize, this.textureSize, THREE.RGBAFormat, THREE.FloatType);
+        texture.minFilter = THREE.NearestFilter;
+        texture.magFilter = THREE.NearestFilter;
+        texture.needsUpdate = true;
+        texture.generateMipmaps = false;
+        texture.flipY = false;
+        return texture;
+    }
 }
-
-
