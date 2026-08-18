@@ -5,12 +5,13 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "development": "./src/index.ts",
+      "import": "./dist/index.js",
       "default": "./dist/index.js"
     }
   },
   "scripts": {
     "build": "vite build && tsc --emitDeclarationOnly --declaration --declarationMap --outDir dist",
+    "watch": "vite build --watch",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
