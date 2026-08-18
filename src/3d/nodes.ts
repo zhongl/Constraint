@@ -1,62 +1,58 @@
-import type { ConstraintSettings } from '../core/settings';
 import * as THREE from 'three';
+import type { ConstraintSettings } from '../core/settings';
 import shaderParse from '../helpers/shaderParse';
 import nodeVert from '../glsl/node.vert';
 import nodeFrag from '../glsl/node.frag';
-
 import type { Fbo } from './fbo';
 import * as math from '../utils/math';
 
-export var mesh: THREE.Points;
+export class ConstraintNodes {
+    mesh!: THREE.Points;
 
-var _geometry: THREE.BufferGeometry;
-var _material: THREE.ShaderMaterial;
-var _settings: ConstraintSettings;
-var _fbo: Fbo;
+    private readonly _settings: ConstraintSettings;
+    private readonly _fbo: Fbo;
+    private _material!: THREE.ShaderMaterial;
 
-export function init(settings: ConstraintSettings, fbo: Fbo) {
-
-    _settings = settings;
-    _fbo = fbo;
-    var PARTICLE_AMOUNT = _fbo.amount;
-    var TEXTURE_SIZE = _fbo.textureSize;
-
-    // use position x, y for the point
-    var positions = new Float32Array(PARTICLE_AMOUNT  * 3);
-
-    var i3;
-    for(var i = 0; i < PARTICLE_AMOUNT; ++i ) {
-        i3 = i * 3;
-        positions[i3 + 0] = (i % TEXTURE_SIZE) / TEXTURE_SIZE;
-        positions[i3 + 1] = ~~(i / TEXTURE_SIZE) / TEXTURE_SIZE;
-        positions[i3 + 2] = Math.pow(math.hash(20 + i * 31.512), 5);
+    constructor(settings: ConstraintSettings, fbo: Fbo) {
+        this._settings = settings;
+        this._fbo = fbo;
     }
-    _geometry = new THREE.BufferGeometry();
-    _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
-    _material = new THREE.ShaderMaterial( {
-        uniforms: THREE.UniformsUtils.merge( [
-            THREE.UniformsLib.fog, {
-            texturePosition: { value: null },
-            alpha: { value: 1 }
-        }]),
-        vertexShader: shaderParse(nodeVert),
-        fragmentShader: shaderParse(nodeFrag),
-        blending: THREE.AdditiveBlending,
-        transparent: true,
-        depthWrite: false,
-        fog: true
-    });
 
-    mesh = new THREE.Points(_geometry, _material);
+    init() {
+        var particleAmount = this._fbo.amount;
+        var textureSize = this._fbo.textureSize;
+        var positions = new Float32Array(particleAmount * 3);
 
-}
+        var i3;
+        for(var i = 0; i < particleAmount; ++i ) {
+            i3 = i * 3;
+            positions[i3] = (i % textureSize) / textureSize;
+            positions[i3 + 1] = ~~(i / textureSize) / textureSize;
+            positions[i3 + 2] = Math.pow(math.hash(20 + i * 31.512), 5);
+        }
 
-export function update(_dt: number) {
+        var geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        this._material = new THREE.ShaderMaterial({
+            uniforms: THREE.UniformsUtils.merge([
+                THREE.UniformsLib.fog, {
+                texturePosition: { value: null },
+                alpha: { value: 1 }
+            }]),
+            vertexShader: shaderParse(nodeVert),
+            fragmentShader: shaderParse(nodeFrag),
+            blending: THREE.AdditiveBlending,
+            transparent: true,
+            depthWrite: false,
+            fog: true
+        });
 
-    mesh.visible = _settings.useWhiteNodes;
+        this.mesh = new THREE.Points(geometry, this._material);
+    }
 
-    var positionTexture = _fbo.positionRenderTarget.texture;
-    _material.uniforms.texturePosition.value = positionTexture;
-    _material.uniforms.alpha.value = 1 - _settings.whiteRatio * 0.9;
-
+    update() {
+        this.mesh.visible = this._settings.useWhiteNodes;
+        this._material.uniforms.texturePosition.value = this._fbo.positionRenderTarget.texture;
+        this._material.uniforms.alpha.value = 1 - this._settings.whiteRatio * 0.9;
+    }
 }
