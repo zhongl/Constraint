@@ -42,4 +42,4 @@ export function init() {
 
 }
 
-export function update() {}
+export function update(_dt: number, _camera: THREE.Camera) {}

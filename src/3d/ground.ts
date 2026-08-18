@@ -9,7 +9,7 @@ var _material;
 var BLACK = new THREE.Color(0x111111);
 var WHITE = new THREE.Color(0xcccccc);
 
-export function init() {
+export function init(_renderer: THREE.WebGLRenderer) {
     _geometry = new THREE.PlaneGeometry( 4000, 4000, 10, 10 );
     _material = new THREE.MeshPhongMaterial( {
         color: new THREE.Color(),
