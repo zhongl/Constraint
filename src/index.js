@@ -113,12 +113,8 @@ function init() {
     }
 
     window.addEventListener('resize', _onResize);
-    window.addEventListener('mousedown', _onDown);
     window.addEventListener('mousemove', _onMove);
-    window.addEventListener('mouseup', _onUp);
-    window.addEventListener('touchstart', _bindTouch(_onDown));
     window.addEventListener('touchmove', _bindTouch(_onMove));
-    window.addEventListener('touchend', _onUp);
     document.addEventListener('keyup', _onKeyUp);
 
     _time = Date.now();
@@ -139,18 +135,11 @@ function _bindTouch(func) {
     };
 }
 
-function _onDown(evt) {
-    _onMove(evt);
-}
-
 function _onMove(evt) {
     // if(_isDown) {
         settings.mouse.x = (evt.pageX / _width) * 2 - 1;
         settings.mouse.y = -(evt.pageY / _height) * 2 + 1;
     // }
-}
-
-function _onUp() {
 }
 
 function _onResize() {
