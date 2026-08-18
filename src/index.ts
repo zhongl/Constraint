@@ -1,3 +1,5 @@
+import './styles/normalize.css';
+import './styles/index.css';
 import GUI from 'lil-gui';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
