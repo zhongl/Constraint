@@ -44,13 +44,13 @@ export function init() {
     _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
     _geometry.setAttribute( 'oppositeUv', new THREE.BufferAttribute( oppositeUv, 2 ));
     _material = new THREE.ShaderMaterial( {
-        uniforms: THREE.UniformsUtils.merge( [
+        uniforms: (THREE.UniformsUtils.merge as any)( [
             THREE.UniformsLib.fog,
             THREE.UniformsLib.lights, {
             texturePosition: { type: 't', value: null },
             whiteNodesRatio: { type: 'f', value: 1 },
             whiteRatio: { type: 'f', value: 1 }
-        }]),
+        }]) as any,
         vertexShader: shaderParse(linesVert),
         fragmentShader: shaderParse(linesFrag),
         linewidth: 1,
@@ -62,7 +62,7 @@ export function init() {
     _depthMaterial = new THREE.ShaderMaterial( {
         uniforms: {
             texturePosition: { type: 't', value: null },
-        },
+        } as any,
         vertexShader: shaderParse(lineDepthVert),
         fragmentShader: shaderParse(lineDepthFrag),
         depthTest: true,

@@ -51,7 +51,7 @@ export function init(renderer) {
         uniforms: {
             resolution: { type: 'v2', value: new THREE.Vector2( TEXTURE_SIZE, TEXTURE_SIZE ) },
             inputTexture: { type: 't', value: null }
-        },
+        } as any,
         vertexShader: shaderParse(fboVert),
         fragmentShader: shaderParse(fboThroughFrag)
     });
@@ -64,7 +64,7 @@ export function init(renderer) {
             textureVelocity: { type: 't', value: null },
             constraintRatio: { type: 'f', value: settings.constraintRatio },
             time: { type: 'f', value: 0 },
-        },
+        } as any,
         vertexShader: shaderParse(fboVert),
         fragmentShader: shaderParse(velocityFrag),
         blending: THREE.NoBlending,
@@ -79,7 +79,7 @@ export function init(renderer) {
             texturePosition: { type: 't', value: null },
             textureVelocity: { type: 't', value: null },
             time: { type: 'f', value: 0 },
-        },
+        } as any,
         vertexShader: shaderParse(fboVert),
         fragmentShader: shaderParse(positionFrag),
         blending: THREE.NoBlending,
@@ -123,7 +123,7 @@ export function init(renderer) {
     return true;
 }
 
-function _updateVelocity() {
+function _updateVelocity(_dt: number) {
 
     // swap
     var tmp = _velocityRenderTarget;
@@ -139,7 +139,7 @@ function _updateVelocity() {
     _renderer.setRenderTarget( null );
 }
 
-function _updatePosition() {
+function _updatePosition(_dt: number) {
 
     // swap
     var tmp = _positionRenderTarget;

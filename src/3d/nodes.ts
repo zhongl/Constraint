@@ -30,11 +30,11 @@ export function init() {
     _geometry = new THREE.BufferGeometry();
     _geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ));
     _material = new THREE.ShaderMaterial( {
-        uniforms: THREE.UniformsUtils.merge( [
+        uniforms: (THREE.UniformsUtils.merge as any)( [
             THREE.UniformsLib.fog, {
             texturePosition: { type: 't', value: null },
             alpha: { type: 'f', value: 1 }
-        }]),
+        }]) as any,
         vertexShader: shaderParse(nodeVert),
         fragmentShader: shaderParse(nodeFrag),
         blending: THREE.AdditiveBlending,
