@@ -23,6 +23,10 @@ class App {
     private readonly _ray = new THREE.Ray();
 
     private _initAnimation = 0;
+    private _lastMouseMove = 0;
+    private _isOverControls = false;
+
+    followTimeout = 500;
 
     init(): void {
         try {
@@ -64,7 +68,7 @@ class App {
         const linesGui = this._gui.addFolder('Motion');
         linesGui.add(this._effect, 'constraintRatio', 0, 0.15).name('constraint ratio');
         linesGui.add(this._effect, 'simulationSpeed', 0, 3).name('simulation speed');
-        linesGui.add(this._effect, 'followPointer').name('follow mouse');
+        linesGui.add(this, 'followTimeout', 100, 1000, 10).name('follow timeout (ms)');
 
         const envGui = this._gui.addFolder('Rendering');
         envGui.add(this._effect, 'useLightNodes').name('light nodes');
@@ -116,6 +120,10 @@ class App {
     }
 
     private _onMove(evt: MouseEvent | Touch): void {
+        this._lastMouseMove = performance.now();
+        this._isOverControls = evt.target instanceof Element && evt.target.closest('.lil-gui') !== null;
+        this._effect.followPointer = !this._isOverControls;
+
         this._mouse.x = (evt.pageX / this._width) * 2 - 1;
         this._mouse.y = -(evt.pageY / this._height) * 2 + 1;
     }
@@ -137,6 +145,9 @@ class App {
     }
 
     private _render(dt: number): void {
+        const isMoving = performance.now() - this._lastMouseMove < this.followTimeout;
+        this._effect.followPointer = isMoving && !this._isOverControls;
+
         this._initAnimation = Math.min(this._initAnimation + dt * 0.0002, 1);
         const zoomAnimation = Math.pow(this._initAnimation, 2);
 
