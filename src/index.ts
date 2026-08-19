@@ -63,11 +63,17 @@ class App {
         this._gui = new GUI();
         const linesGui = this._gui.addFolder('Motion');
         linesGui.add(this._effect, 'constraintRatio', 0, 0.15).name('constraint ratio');
+        linesGui.add(this._effect, 'simulationSpeed', 0, 3).name('simulation speed');
         linesGui.add(this._effect, 'followPointer').name('follow mouse');
 
         const envGui = this._gui.addFolder('Rendering');
-        linesGui.add(this._effect, 'useWhiteNodes').name('white nodes');
-        envGui.add(this._effect, 'isWhite').listen();
+        envGui.add(this._effect, 'useLightNodes').name('light nodes');
+        envGui.add(this._effect, 'isLight').name('light mode').listen();
+        envGui.addColor(this._effect.settings, 'backgroundDark').name('background dark');
+        envGui.addColor(this._effect.settings, 'backgroundLight').name('background light');
+        envGui.addColor(this._effect.settings, 'groundDark').name('ground dark');
+        envGui.addColor(this._effect.settings, 'groundLight').name('ground light');
+        envGui.add(this._effect.settings, 'fogDensity', 0, 0.01).name('fog density');
 
         const preventDefault = (evt: KeyboardEvent) => {
             evt.preventDefault();
@@ -99,7 +105,7 @@ class App {
 
     private _onKeyUp(evt: KeyboardEvent): void {
         if (evt.keyCode === 32) {
-            this._effect.isWhite = !this._effect.isWhite;
+            this._effect.isLight = !this._effect.isLight;
         }
     }
 
@@ -147,7 +153,7 @@ class App {
 
         this._renderer.render(this._scene, this._camera);
 
-        document.documentElement.classList.toggle('is-white', this._effect.isWhite);
+        document.documentElement.classList.toggle('is-light', this._effect.isLight);
     }
 }
 

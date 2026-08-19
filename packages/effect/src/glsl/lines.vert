@@ -3,7 +3,7 @@
 attribute vec2 oppositeUv;
 
 uniform sampler2D texturePosition;
-uniform float whiteNodesRatio;
+uniform float lightNodesRatio;
 
 varying float vBrightness;
 
@@ -20,7 +20,7 @@ void main() {
 
     vec4 worldPosition = modelMatrix * vec4( pos, 1.0 );
     vec4 mvPosition = viewMatrix * worldPosition;
-    vBrightness = brightness * whiteNodesRatio;
+    vBrightness = brightness * lightNodesRatio;
 
     // chunk(fog_vertex);
     vec3 transformedNormal = vec3( 0.0, 0.0, 1.0 );

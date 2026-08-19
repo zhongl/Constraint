@@ -56,8 +56,8 @@ export class ConstraintNodes {
     }
 
     update(): void {
-        this.mesh.visible = this._settings.useWhiteNodes;
+        this.mesh.visible = this._settings.useLightNodes;
         this._material.uniforms.texturePosition!.value = this._fbo.positionRenderTarget.texture;
-        this._material.uniforms.alpha!.value = 1 - this._settings.whiteRatio * 0.9;
+        this._material.uniforms.alpha!.value = 1 - this._settings.lightRatio * 0.9;
     }
 }

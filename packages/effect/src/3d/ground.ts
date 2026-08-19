@@ -1,13 +1,12 @@
 import * as THREE from 'three';
 import type { ConstraintSettings } from '../core/settings';
 
-const BLACK = new THREE.Color(0x111111);
-const WHITE = new THREE.Color(0xcccccc);
-
 export class ConstraintGround {
     mesh!: THREE.Mesh;
 
     private readonly _settings: ConstraintSettings;
+    private readonly _groundDark = new THREE.Color();
+    private readonly _groundLight = new THREE.Color();
     private _material!: THREE.MeshPhongMaterial;
 
     constructor(settings: ConstraintSettings) {
@@ -35,7 +34,10 @@ export class ConstraintGround {
     }
 
     update(): void {
+        this._groundDark.set(this._settings.groundDark);
+        this._groundLight.set(this._settings.groundLight);
+
         this.mesh.visible = true;
-        this._material.color.copy(BLACK).lerp(WHITE, this._settings.whiteRatio);
+        this._material.color.copy(this._groundDark).lerp(this._groundLight, this._settings.lightRatio);
     }
 }
