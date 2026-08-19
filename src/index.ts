@@ -23,6 +23,10 @@ class App {
     private readonly _ray = new THREE.Ray();
 
     private _initAnimation = 0;
+    private _lastMouseMove = 0;
+    private _isOverControls = false;
+
+    followTimeout = 500;
 
     init(): void {
         try {
@@ -52,7 +56,10 @@ class App {
         this._control.enablePan = false;
         this._control.update();
 
-        this._effect = new ConstraintEffect(this._renderer, this._scene);
+        this._effect = new ConstraintEffect(this._renderer, this._scene, {
+            textureSize: 32,
+            lineAmount: 1024 * 16
+        });
         if (!this._effect.init()) {
             this._renderer.dispose();
             this._renderer.domElement.remove();
@@ -64,16 +71,16 @@ class App {
         const linesGui = this._gui.addFolder('Motion');
         linesGui.add(this._effect, 'constraintRatio', 0, 0.15).name('constraint ratio');
         linesGui.add(this._effect, 'simulationSpeed', 0, 3).name('simulation speed');
-        linesGui.add(this._effect, 'followPointer').name('follow mouse');
+        linesGui.add(this, 'followTimeout', 100, 1000, 10).name('follow timeout (ms)');
 
         const envGui = this._gui.addFolder('Rendering');
         envGui.add(this._effect, 'useLightNodes').name('light nodes');
         envGui.add(this._effect, 'isLight').name('light mode').listen();
-        envGui.addColor(this._effect.settings, 'backgroundDark').name('background dark');
-        envGui.addColor(this._effect.settings, 'backgroundLight').name('background light');
-        envGui.addColor(this._effect.settings, 'groundDark').name('ground dark');
-        envGui.addColor(this._effect.settings, 'groundLight').name('ground light');
-        envGui.add(this._effect.settings, 'fogDensity', 0, 0.01).name('fog density');
+        envGui.addColor(this._effect, 'backgroundDark').name('background dark');
+        envGui.addColor(this._effect, 'backgroundLight').name('background light');
+        envGui.addColor(this._effect, 'groundDark').name('ground dark');
+        envGui.addColor(this._effect, 'groundLight').name('ground light');
+        envGui.add(this._effect, 'fogDensity', 0, 0.01).name('fog density');
 
         const preventDefault = (evt: KeyboardEvent) => {
             evt.preventDefault();
@@ -116,6 +123,10 @@ class App {
     }
 
     private _onMove(evt: MouseEvent | Touch): void {
+        this._lastMouseMove = performance.now();
+        this._isOverControls = evt.target instanceof Element && evt.target.closest('.lil-gui') !== null;
+        this._effect.followPointer = !this._isOverControls;
+
         this._mouse.x = (evt.pageX / this._width) * 2 - 1;
         this._mouse.y = -(evt.pageY / this._height) * 2 + 1;
     }
@@ -137,6 +148,9 @@ class App {
     }
 
     private _render(dt: number): void {
+        const isMoving = performance.now() - this._lastMouseMove < this.followTimeout;
+        this._effect.followPointer = isMoving && !this._isOverControls;
+
         this._initAnimation = Math.min(this._initAnimation + dt * 0.0002, 1);
         const zoomAnimation = Math.pow(this._initAnimation, 2);
 
@@ -148,8 +162,7 @@ class App {
         this._ray.direction.set(this._mouse.x, this._mouse.y, 0.5).unproject(this._camera).sub(this._ray.origin).normalize();
         const distance = this._ray.origin.length() / Math.cos(Math.PI - this._ray.direction.angleTo(this._ray.origin));
         this._ray.origin.add(this._ray.direction.multiplyScalar(distance * 0.9));
-        this._effect.setPointer(this._ray.origin);
-        this._effect.update(dt, this._camera);
+        this._effect.update(dt, this._camera, this._ray.origin);
 
         this._renderer.render(this._scene, this._camera);
 

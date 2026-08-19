@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import type { ConstraintSettings } from '../core/settings';
 import shaderParse from '../helpers/shaderParse';
 import linesVert from '../glsl/lines.vert';
 import linesFrag from '../glsl/lines.frag';
@@ -11,20 +10,21 @@ import * as math from '../utils/math';
 export class ConstraintLines {
     mesh!: THREE.LineSegments;
 
-    private readonly _settings: ConstraintSettings;
     private readonly _fbo: Fbo;
     private _material!: THREE.ShaderMaterial;
     private _depthMaterial!: THREE.ShaderMaterial;
 
-    constructor(settings: ConstraintSettings, fbo: Fbo) {
-        this._settings = settings;
+    constructor(
+        private readonly _lineAmount: number,
+        fbo: Fbo
+    ) {
         this._fbo = fbo;
     }
 
     init(): void {
         const particleAmount = this._fbo.amount;
         const textureSize = this._fbo.textureSize;
-        const lineAmount = this._settings.lineAmount;
+        const lineAmount = this._lineAmount;
 
         const positions = new Float32Array(lineAmount * 2 * 3);
         const oppositeUv = new Float32Array(lineAmount * 2 * 2);
@@ -87,11 +87,14 @@ export class ConstraintLines {
         this._depthMaterial.dispose();
     }
 
-    update(): void {
-        const positionTexture = this._fbo.positionRenderTarget.texture;
+    update(
+        positionTexture: THREE.Texture,
+        lightNodesRatio: number,
+        lightRatio: number
+    ): void {
         this._material.uniforms.texturePosition!.value = positionTexture;
         this._depthMaterial.uniforms.texturePosition!.value = positionTexture;
-        this._material.uniforms.lightNodesRatio!.value = this._settings.lightNodesRatio;
-        this._material.uniforms.lightRatio!.value = this._settings.lightRatio;
+        this._material.uniforms.lightNodesRatio!.value = lightNodesRatio;
+        this._material.uniforms.lightRatio!.value = lightRatio;
     }
 }
