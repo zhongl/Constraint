@@ -2,6 +2,7 @@ uniform vec2 resolution;
 
 uniform sampler2D textureVelocity;
 uniform sampler2D texturePosition;
+uniform float delta;
 uniform float time;
 
 const float INTERSECTION_PRECISION = 1.0;
@@ -18,7 +19,7 @@ void main() {
     vec3 position = positionInfo.xyz;
     float brightness = positionInfo.w;
 
-    position += velocity;
+    position += velocity * delta;
 
     float onEdgeRatio = smoothstep(190.0, 200.0, length(position));
 

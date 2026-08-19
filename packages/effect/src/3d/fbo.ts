@@ -66,6 +66,7 @@ export class Fbo {
                 texturePosition: { value: null },
                 textureVelocity: { value: null },
                 constraintRatio: { value: this._settings.constraintRatio },
+                delta: { value: 1 },
                 time: { value: 0 },
             },
             vertexShader: shaderParse(fboVert),
@@ -81,6 +82,7 @@ export class Fbo {
                 resolution: { value: new THREE.Vector2(this.textureSize, this.textureSize) },
                 texturePosition: { value: null },
                 textureVelocity: { value: null },
+                delta: { value: 1 },
                 time: { value: 0 },
             },
             vertexShader: shaderParse(fboVert),
@@ -110,7 +112,11 @@ export class Fbo {
     }
 
     update(dt: number): void {
+        const delta = Math.min(dt, 50) / (1000 / 60) * this._settings.simulationSpeed;
         this._time += dt;
+
+        this._velocityShader.uniforms.delta!.value = delta;
+        this._positionShader.uniforms.delta!.value = delta;
 
         const mouse3dUniformValue = this._velocityShader.uniforms.mouse3d!.value;
         if (this._settings.followMouse) {

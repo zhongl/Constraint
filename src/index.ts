@@ -63,6 +63,7 @@ class App {
         this._gui = new GUI();
         const linesGui = this._gui.addFolder('Motion');
         linesGui.add(this._effect, 'constraintRatio', 0, 0.15).name('constraint ratio');
+        linesGui.add(this._effect, 'simulationSpeed', 0, 3).name('simulation speed');
         linesGui.add(this._effect, 'followPointer').name('follow mouse');
 
         const envGui = this._gui.addFolder('Rendering');

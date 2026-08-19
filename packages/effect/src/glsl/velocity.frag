@@ -1,5 +1,6 @@
 uniform vec2 resolution;
 uniform float constraintRatio;
+uniform float delta;
 uniform vec3 mouse3d;
 
 uniform sampler2D textureVelocity;
@@ -27,11 +28,11 @@ void main() {
 
     vec3 mousePos = mouse3d - position;
 
-    velocity *= 0.8;
-    velocity += (1.0 - smoothstep(0.0, 800.0, length(mousePos))) * normalize(mousePos) * 0.5;
-    velocity += curl(position * 0.1) * 0.75;
-    velocity += constraintVector * (1.0 - smoothstep(0.0, 400.0, constraintDistance)) * constraintRatio;
-    velocity += (-position) * smoothstep(195.0, 270.0, length(position)) * .03;
+    velocity *= pow(0.8, delta);
+    velocity += (1.0 - smoothstep(0.0, 800.0, length(mousePos))) * normalize(mousePos) * 0.5 * delta;
+    velocity += curl(position * 0.1) * 0.75 * delta;
+    velocity += constraintVector * (1.0 - smoothstep(0.0, 400.0, constraintDistance)) * constraintRatio * delta;
+    velocity += (-position) * smoothstep(195.0, 270.0, length(position)) * .03 * delta;
 
     gl_FragColor = vec4(velocity, velocityInfo.w );
 

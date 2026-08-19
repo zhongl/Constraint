@@ -5,6 +5,7 @@ export interface ConstraintSettings {
     lineAmount: number;
     followMouse: boolean;
     constraintRatio: number;
+    simulationSpeed: number;
     useLightNodes: boolean;
     lightNodesRatio: number;
     isLight: boolean;
@@ -24,6 +25,7 @@ export function createSettings(): ConstraintSettings {
         lineAmount: 1024 * 16,
         followMouse: false,
         constraintRatio: 0.07,
+        simulationSpeed: 1,
         useLightNodes: false,
         lightNodesRatio: 1,
         isLight: false,

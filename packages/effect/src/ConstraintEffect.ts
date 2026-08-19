@@ -42,6 +42,14 @@ export class ConstraintEffect {
         this._settings.constraintRatio = value;
     }
 
+    get simulationSpeed(): number {
+        return this._settings.simulationSpeed;
+    }
+
+    set simulationSpeed(value: number) {
+        this._settings.simulationSpeed = value;
+    }
+
     get followPointer(): boolean {
         return this._settings.followMouse;
     }
