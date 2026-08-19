@@ -4,16 +4,18 @@ import { ConstraintGround } from './3d/ground';
 import { ConstraintLights } from './3d/lights';
 import { ConstraintLines } from './3d/lines';
 import { ConstraintNodes } from './3d/nodes';
-import { createSettings } from './core/settings';
-
-const BLACK = new THREE.Color(0x222222);
-const WHITE = new THREE.Color(0xeeeeee);
+import { createSettings, type ConstraintSettings } from './core/settings';
 
 export class ConstraintEffect {
     private readonly _renderer: THREE.WebGLRenderer;
     private readonly _scene: THREE.Scene;
-    private readonly _fog = new THREE.FogExp2(0x222222, 0.001);
     private readonly _settings = createSettings();
+    private readonly _fog = new THREE.FogExp2(
+        this._settings.backgroundDark,
+        this._settings.fogDensity
+    );
+    private readonly _backgroundDark = new THREE.Color();
+    private readonly _backgroundLight = new THREE.Color();
     private readonly _fbo = new Fbo(this._settings);
     private readonly _lines: ConstraintLines;
     private readonly _nodes: ConstraintNodes;
@@ -48,20 +50,24 @@ export class ConstraintEffect {
         this._settings.followMouse = value;
     }
 
-    get useWhiteNodes(): boolean {
-        return this._settings.useWhiteNodes;
+    get settings(): ConstraintSettings {
+        return this._settings;
     }
 
-    set useWhiteNodes(value: boolean) {
-        this._settings.useWhiteNodes = value;
+    get useLightNodes(): boolean {
+        return this._settings.useLightNodes;
     }
 
-    get isWhite(): boolean {
-        return this._settings.isWhite;
+    set useLightNodes(value: boolean) {
+        this._settings.useLightNodes = value;
     }
 
-    set isWhite(value: boolean) {
-        this._settings.isWhite = value;
+    get isLight(): boolean {
+        return this._settings.isLight;
+    }
+
+    set isLight(value: boolean) {
+        this._settings.isLight = value;
     }
 
     init(): boolean {
@@ -119,10 +125,13 @@ export class ConstraintEffect {
     }
 
     update(dt: number, camera: THREE.PerspectiveCamera): void {
-        this._settings.whiteRatio += ((this._settings.isWhite ? 1 : 0) - this._settings.whiteRatio) * 0.2;
-        this._settings.whiteNodesRatio += ((this._settings.useWhiteNodes ? 1 : 0) - this._settings.whiteNodesRatio) * 0.1;
+        this._settings.lightRatio += ((this._settings.isLight ? 1 : 0) - this._settings.lightRatio) * 0.2;
+        this._settings.lightNodesRatio += ((this._settings.useLightNodes ? 1 : 0) - this._settings.lightNodesRatio) * 0.1;
 
-        this._fog.color.copy(BLACK).lerp(WHITE, this._settings.whiteRatio);
+        this._backgroundDark.set(this._settings.backgroundDark);
+        this._backgroundLight.set(this._settings.backgroundLight);
+        this._fog.color.copy(this._backgroundDark).lerp(this._backgroundLight, this._settings.lightRatio);
+        this._fog.density = this._settings.fogDensity;
         this._renderer.setClearColor(this._fog.color.getHex());
         this._skybox.position.copy(camera.position);
 

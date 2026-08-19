@@ -53,8 +53,8 @@ export class ConstraintLines {
                 THREE.UniformsLib.fog,
                 THREE.UniformsLib.lights, {
                 texturePosition: { value: null },
-                whiteNodesRatio: { value: 1 },
-                whiteRatio: { value: 1 }
+                lightNodesRatio: { value: 1 },
+                lightRatio: { value: 1 }
             }]),
             vertexShader: shaderParse(linesVert),
             fragmentShader: shaderParse(linesFrag),
@@ -91,7 +91,7 @@ export class ConstraintLines {
         const positionTexture = this._fbo.positionRenderTarget.texture;
         this._material.uniforms.texturePosition!.value = positionTexture;
         this._depthMaterial.uniforms.texturePosition!.value = positionTexture;
-        this._material.uniforms.whiteNodesRatio!.value = this._settings.whiteNodesRatio;
-        this._material.uniforms.whiteRatio!.value = this._settings.whiteRatio;
+        this._material.uniforms.lightNodesRatio!.value = this._settings.lightNodesRatio;
+        this._material.uniforms.lightRatio!.value = this._settings.lightRatio;
     }
 }
