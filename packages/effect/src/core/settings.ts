@@ -20,8 +20,8 @@ export interface ConstraintSettings {
 
 export function createSettings(): ConstraintSettings {
     return {
-        textureSize: 128,
-        lineAmount: 65536,
+        textureSize: 32,
+        lineAmount: 1024 * 16,
         followMouse: false,
         constraintRatio: 0.07,
         useLightNodes: false,
