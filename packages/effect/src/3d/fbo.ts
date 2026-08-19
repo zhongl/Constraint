@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import type { ConstraintSettings } from '../core/settings';
 import shaderParse from '../helpers/shaderParse';
 import fboVert from '../glsl/fbo.vert';
 import fboThroughFrag from '../glsl/fboThrough.frag';
 import velocityFrag from '../glsl/velocity.frag';
 import positionFrag from '../glsl/position.frag';
+
+const defaultMouse3d = new THREE.Vector3(0, 0, -9999);
 
 export class Fbo {
     readonly textureSize: number;
@@ -13,7 +14,6 @@ export class Fbo {
     positionRenderTarget!: THREE.WebGLRenderTarget;
     prevPositionRenderTarget!: THREE.WebGLRenderTarget;
 
-    private readonly _settings: ConstraintSettings;
     private _copyShader!: THREE.ShaderMaterial;
     private _velocityShader!: THREE.ShaderMaterial;
     private _positionShader!: THREE.ShaderMaterial;
@@ -29,10 +29,9 @@ export class Fbo {
     private _velocityTexture!: THREE.DataTexture;
     private _positionTexture!: THREE.DataTexture;
 
-    constructor(settings: ConstraintSettings) {
-        this._settings = settings;
-        this.textureSize = settings.textureSize;
-        this.amount = this.textureSize * this.textureSize;
+    constructor(textureSize: number) {
+        this.textureSize = textureSize;
+        this.amount = textureSize * textureSize;
     }
 
     init(renderer: THREE.WebGLRenderer): boolean {
@@ -65,7 +64,7 @@ export class Fbo {
                 mouse3d: { value: new THREE.Vector3() },
                 texturePosition: { value: null },
                 textureVelocity: { value: null },
-                constraintRatio: { value: this._settings.constraintRatio },
+                constraintRatio: { value: 0 },
                 delta: { value: 1 },
                 time: { value: 0 },
             },
@@ -111,26 +110,28 @@ export class Fbo {
         return true;
     }
 
-    update(dt: number): void {
-        const delta = Math.min(dt, 50) / (1000 / 60) * this._settings.simulationSpeed;
+    update(
+        dt: number,
+        simulationSpeed: number,
+        constraintRatio: number,
+        mouse3d: THREE.Vector3 | null
+    ): THREE.Texture {
+        const delta = Math.min(dt, 50) / (1000 / 60) * simulationSpeed;
         this._time += dt;
 
         this._velocityShader.uniforms.delta!.value = delta;
         this._positionShader.uniforms.delta!.value = delta;
 
         const mouse3dUniformValue = this._velocityShader.uniforms.mouse3d!.value;
-        if (this._settings.followMouse) {
-            mouse3dUniformValue.copy(this._settings.mouse3d);
-        } else {
-            mouse3dUniformValue.set(0.0, 0.0, -9999);
-        }
+        mouse3dUniformValue.copy(mouse3d ?? defaultMouse3d);
 
-        this._velocityShader.uniforms.constraintRatio!.value = this._settings.constraintRatio;
+        this._velocityShader.uniforms.constraintRatio!.value = constraintRatio;
         this._updateVelocity();
         this._updatePosition();
 
         this.positionRenderTarget = this._positionRenderTarget;
         this.prevPositionRenderTarget = this._positionRenderTarget2;
+        return this._positionRenderTarget.texture;
     }
 
     dispose(): void {

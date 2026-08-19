@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import type { ConstraintSettings } from '../core/settings';
 import shaderParse from '../helpers/shaderParse';
 import nodeVert from '../glsl/node.vert';
 import nodeFrag from '../glsl/node.frag';
@@ -9,12 +8,10 @@ import * as math from '../utils/math';
 export class ConstraintNodes {
     mesh!: THREE.Points;
 
-    private readonly _settings: ConstraintSettings;
     private readonly _fbo: Fbo;
     private _material!: THREE.ShaderMaterial;
 
-    constructor(settings: ConstraintSettings, fbo: Fbo) {
-        this._settings = settings;
+    constructor(fbo: Fbo) {
         this._fbo = fbo;
     }
 
@@ -55,9 +52,13 @@ export class ConstraintNodes {
         this._material.dispose();
     }
 
-    update(): void {
-        this.mesh.visible = this._settings.useLightNodes;
-        this._material.uniforms.texturePosition!.value = this._fbo.positionRenderTarget.texture;
-        this._material.uniforms.alpha!.value = 1 - this._settings.lightRatio * 0.9;
+    update(
+        positionTexture: THREE.Texture,
+        visible: boolean,
+        lightRatio: number
+    ): void {
+        this.mesh.visible = visible;
+        this._material.uniforms.texturePosition!.value = positionTexture;
+        this._material.uniforms.alpha!.value = 1 - lightRatio * 0.9;
     }
 }
